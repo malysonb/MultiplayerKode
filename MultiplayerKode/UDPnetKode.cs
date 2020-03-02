@@ -8,7 +8,7 @@ using System.Threading;
     Server based multiplayer mode, 
     Can be used on Massive Multiplayer games 
 
-    Alert: Insecure for while.
+    Alert: It's not cheatproof yet.
 */
 
 namespace MultiplayerKode

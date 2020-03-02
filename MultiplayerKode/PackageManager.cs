@@ -46,9 +46,36 @@ namespace MultiplayerKode
             return Encoding.ASCII.GetBytes(_string);
         }
 
+        /// <summary>
+        /// Gets bytes from a string using a token to separate them
+        /// </summary>
+        /// <param name="token">token char to separate the message</param>
+        /// <param name="args">Arguments to send to another client</param>
+        /// <returns>An array of bytes</returns>
         public byte[] GetBytesFromMessage(char token = '|',params object[] args)
         {
             return Encoding.ASCII.GetBytes(GenerateMessage(token,args));
+        }
+
+        /// <summary>
+        /// Translates an array of bytes to an array of strings.
+        /// </summary>
+        /// <param name="array">Byte array</param>
+        /// <param name="token">Token to separate the message</param>
+        /// <returns>An array of strings</returns>
+        public string[] Translate(byte[] array, char token = '|')
+        {
+            return Encoding.ASCII.GetString(array).Split(token);
+        }
+        /// <summary>
+        /// Converts an array of strings inside a string.
+        /// </summary>
+        /// <param name="msg">String with a hidden string array</param>
+        /// <param name="token">Token to separate the message</param>
+        /// <returns>An array of strings</returns>
+        public string[] Translate(string msg, char token = '|')
+        {
+            return msg.Split(token);
         }
     }
 }

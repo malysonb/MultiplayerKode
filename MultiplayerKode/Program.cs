@@ -6,14 +6,13 @@ namespace MultiplayerKode
     {
         static void Main(string[] args)
         {
-            bool keepAlive = true;
             Console.WriteLine("[Starting Radiko Multiplayer NetKode!]");
-            UDPnetKode Server = new UDPnetKode();
+            UDPnetKode Server = new UDPnetKode(8484);
             while (Server.alive)
             {
                 Console.Write(">");
                 string command = Console.ReadLine();
-                Server.enviar(command);
+                Server.send(command);
             }
             Environment.Exit(0);
         }

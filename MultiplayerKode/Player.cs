@@ -18,10 +18,9 @@ namespace MultiplayerKode
         /// Create a new player with all its stuffs
         /// </summary>
         /// <param name="id"></param>
-        public Player(int id, int numberOfCustomVariables)
+        public Player(int id)
         {
             this.id = id;
-            this.CustomVariables = new object[numberOfCustomVariables];
         }
 
         /// <summary>

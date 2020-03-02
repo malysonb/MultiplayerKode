@@ -18,14 +18,14 @@ namespace MultiplayerKode
         private int id;
         private int timeOut;
 
-        public Client(string Address, int port, string nome, int id = 0,int qt_custom = 2)
+        public Client(string Address, int port, string nome, int id = 0)
         {
             this.Address = Address;
             this.Port = port;
             this.Nome = nome;
             online = true;
             this.Id = id;
-            Player = new Player(Id,qt_custom);
+            Player = new Player(Id);
             this.endPoint = new IPEndPoint(IPAddress.Parse(Address), port);
             Console.WriteLine("New user created in memory");
         }

@@ -5,7 +5,8 @@ using System.Text;
 namespace MultiplayerKode
 {
     /// <summary>
-    /// PACKAGE MANAGER FOR SERVER
+    /// PACKAGE MANAGER FOR SERVER<br/>
+    /// VERSION 1.0
     /// </summary>
     class PackageManager
     {

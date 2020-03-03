@@ -38,7 +38,7 @@ namespace MultiplayerKode
                 "Version Alpha 0.0.2");
             clock = new System.Timers.Timer(2000);
             clock.Elapsed += Clock_Elapsed;
-            clock.Enabled = true;
+            //clock.Enabled = true;
             clock.AutoReset = true;
             broad = new Thread(Sync);
             broad.Start();
@@ -57,6 +57,9 @@ namespace MultiplayerKode
         /// <summary>
         /// Where you receive your messages
         /// </summary>
+        /// 
+        [Obsolete("Will be removed in the future, a new one will substitute this\n" +
+            "Use RecvMessage Instead")]
         public void Mensagens()
         {
             while (alive)
@@ -69,7 +72,7 @@ namespace MultiplayerKode
                     {
                         sendDirect(package.GenerateMessage('|', "HANDSHAKE", IDcont), clientes.Address.ToString(), clientes.Port);
                         users.Add(inserir(clientes.Address.ToString(), clientes.Port, mensagens[1]));
-                        send(package.GenerateMessage('|', "INFO", "Join", Procurar(clientes.Address.ToString(), clientes.Port).Id, Procurar(clientes.Address.ToString(), clientes.Port).Nome,2));
+                        send(package.GenerateMessage('|', "INFO", "Join", SearchByAddres(clientes.Address.ToString(), clientes.Port).Id, SearchByAddres(clientes.Address.ToString(), clientes.Port).Nome,2));
                     }
                     else if (mensagens[0] == "bye")
                     {
@@ -77,7 +80,7 @@ namespace MultiplayerKode
                     }
                     else if (mensagens[0] == "pong")
                     {
-                        Procurar(clientes.Address.ToString(), clientes.Port).TimeOut = 0;
+                        SearchByAddres(clientes.Address.ToString(), clientes.Port).TimeOut = 0;
                     }
                     else if( mensagens[0] == "SYNC")
                     {
@@ -90,17 +93,17 @@ namespace MultiplayerKode
                     }
                     else if(mensagens[0] == "CHAT")
                     {
-                        if (Procurar(clientes.Address.ToString(), clientes.Port) != null)
+                        if (SearchByAddres(clientes.Address.ToString(), clientes.Port) != null)
                         {
-                            Client clien = Procurar(clientes.Address.ToString(), clientes.Port);
+                            Client clien = SearchByAddres(clientes.Address.ToString(), clientes.Port);
                             Console.WriteLine(clien.Nome + ": " + package.Translate(pacote));
                         }
                     }
                     else
                     {
-                        if(Procurar(clientes.Address.ToString(),clientes.Port) != null)
+                        if(SearchByAddres(clientes.Address.ToString(),clientes.Port) != null)
                         {
-                            Client clien = Procurar(clientes.Address.ToString(), clientes.Port);
+                            Client clien = SearchByAddres(clientes.Address.ToString(), clientes.Port);
                             Console.WriteLine(clien.Nome+": " + package.Translate(pacote)+ "(without use chat command)");
                         }
                         else
@@ -113,6 +116,73 @@ namespace MultiplayerKode
                 catch (SocketException e)
                 {
                     Console.WriteLine("Trying communication.");
+                }
+            }
+        }
+
+        /*public interface SignalInterface
+        {
+            const byte PING = 0;
+            const byte SYNC = 1;
+            const byte CHAT = 2;
+            const byte INPUT = 3;
+            const byte HELLO = 4;
+            const byte GOODBYE = 5;
+            const byte JOIN = 6;
+        }*/
+
+        /// <summary>
+        /// Server receives messages from the clients
+        /// </summary>
+        public void RecvMessage()
+        {
+            while (alive)
+            {
+                try
+                {
+                    byte[] Pkg = server.Receive(ref clientes);
+                    switch (Pkg[0])
+                    {
+                        case @interface.ISignal.HELLO:
+
+                            break;
+                        case @interface.ISignal.GOODBYE:
+                            if(SearchByAddres(clientes.Address.ToString(), clientes.Port) != null)
+                            {
+                                Client temp = SearchByAddres(clientes.Address.ToString(), clientes.Port);
+                                remove(temp.Id, "Disconnected Safely");
+                            }
+                            break;
+                        case @interface.ISignal.PING:
+                            if(SearchByAddres(clientes.Address.ToString(), clientes.Port) != null)
+                            {
+                                SearchByAddres(clientes.Address.ToString(), clientes.Port).TimeOut = 0;
+                            }
+                            break;
+                        case @interface.ISignal.SYNC:
+                            if(SearchByAddres(clientes.Address.ToString(),clientes.Port) != null)
+                            {
+                                Client temp = SearchByAddres(clientes.Address.ToString(), clientes.Port);
+                                byte[] pos = new byte[12];
+                                for(int i = 1; i <= 12; i++)
+                                {
+                                    pos[i - 1] = Pkg[i];
+                                }
+                                temp.SetPositionByByteArray(pos);
+                            }
+                            break;
+                        case @interface.ISignal.INPUT:
+
+                            break;
+                        case @interface.ISignal.CHAT:
+
+                            break;
+                    }
+
+                }
+                catch (SocketException e)
+                {
+                    Console.WriteLine("Trying Communication.");
                 }
             }
         }
@@ -157,6 +227,8 @@ namespace MultiplayerKode
         /// Send a ping signal to keep connection alive.
         /// </summary>
         /// <param name="aviso">Send a custom message</param>
+        /// 
+        [Obsolete]
         public void send(string aviso = "",bool sync = false)
         {
             if(aviso == "EXIT" || aviso == "exit" || aviso == "stop")
@@ -205,7 +277,7 @@ namespace MultiplayerKode
         /// <param name="Address"></param>
         /// <param name="port"></param>
         /// <returns>Client object</returns>
-        public Client Procurar(string Address, int port)
+        public Client SearchByAddres(string Address, int port)
         {
             for (int i = 0; i < users.Count; i++)
             {
@@ -256,6 +328,8 @@ namespace MultiplayerKode
         /// <param name="message">String to send to a client</param>
         /// <param name="Address">client's Address</param>
         /// <param name="_port"></param>
+        ///
+        [Obsolete]
         public void sendDirect(string message, string Address, int _port)
         {
             IPEndPoint EP = new IPEndPoint(IPAddress.Parse(Address), _port);

@@ -1,13 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Text;
 
 namespace MultiplayerKode
 {
     /// <summary>
     /// PACKAGE MANAGER FOR SERVER<br/>
-    /// VERSION 1.0
+    /// VERSION 2.0
     /// </summary>
+    /// 
     class PackageManager
     {
         /// <summary>
@@ -16,7 +16,8 @@ namespace MultiplayerKode
         /// <param name="args">Parameters to send</param>
         /// <param name="token">token for the division</param>
         /// <returns>a complete string token at a character</returns>
-        public string GenerateMessage(char token = '|',params object[] args)
+        [Obsolete("Will be removed, Use the new one")]
+        public string GenerateMessage(char token = '|', params object[] args)
         {
             string complete = "";
             foreach (var arg in args)
@@ -25,6 +26,22 @@ namespace MultiplayerKode
                 complete += token;
             }
             return complete;
+        }
+        /// <summary>
+        /// New PackageSender
+        /// </summary>
+        /// <param name="signal"></param>
+        /// <param name="args"></param>
+        /// <returns></returns>
+        public byte[] GenerateMessage(byte signal, params byte[] args)
+        {
+            byte[] Package = new byte[args.Length + 1];
+            Package[0] = signal;
+            for (int i = 1; i < Package.Length; i++)
+            {
+                Package[i] = args[i - 1];
+            }
+            return Package;
         }
 
         /// <summary>
@@ -53,9 +70,10 @@ namespace MultiplayerKode
         /// <param name="token">token char to separate the message</param>
         /// <param name="args">Arguments to send to another client</param>
         /// <returns>An array of bytes</returns>
-        public byte[] GetBytesFromMessage(char token = '|',params object[] args)
+        [Obsolete("Will be removed in the future")]
+        public byte[] GetBytesFromMessage(char token = '|', params object[] args)
         {
-            return Encoding.ASCII.GetBytes(GenerateMessage(token,args));
+            return Encoding.ASCII.GetBytes(GenerateMessage(token, args));
         }
 
         /// <summary>

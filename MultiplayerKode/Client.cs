@@ -29,6 +29,11 @@ namespace MultiplayerKode
             this.endPoint = new IPEndPoint(IPAddress.Parse(Address), port);
             Console.WriteLine("New user created in memory");
         }
+        public Client()
+        {
+            Console.WriteLine("—WARNING! OFFLINE CLIENT FOR TESTS—");
+            Player = new Player(-1);
+        }
 
         public int Port { get => port; set => port = value; }
         public bool Online { get => online; set => online = value; }
@@ -43,9 +48,36 @@ namespace MultiplayerKode
         /// Gets the 3D position of a player.
         /// </summary>
         /// <returns>A string with the 3D axes token at ";"</returns>
-        public string GetPosition()
+        /// 
+        [Obsolete]
+        public string GetPositionString()
         {
             return player.Position.X + ";" + player.Position.Y + ";" + player.Position.Z;
+        }
+
+        public byte[] GetPosition()
+        {
+            byte[] x = new byte[4], y = new byte[4], z = new byte[4];
+            x = BitConverter.GetBytes(player.Position.X);
+            y = BitConverter.GetBytes(player.Position.Y);
+            z = BitConverter.GetBytes(player.Position.Z);
+            byte[] complete = new byte[12];
+            for (int i = 0; i < 12; i++)
+            {
+                if (i < 4)
+                {
+                    complete[i] = x[i];
+                }
+                if (i >= 4 && i < 8)
+                {
+                    complete[i] = y[i - 4];
+                }
+                if (i >= 8 && i < 12)
+                {
+                    complete[i] = z[i - 8];
+                }
+            }
+            return complete;
         }
 
         /// <summary>
@@ -74,6 +106,20 @@ namespace MultiplayerKode
             float X = float.Parse(pos[0]);
             float Y = float.Parse(pos[1]);
             float Z = float.Parse(pos[2]);
+            SetPosition(X, Y, Z);
+        }
+
+        public void SetPositionByByteArray(byte[] Bytes)
+        {
+            byte[] x = new byte[4] {Bytes[0], Bytes[1], Bytes[2], Bytes[3] };
+            byte[] y = new byte[4] { Bytes[4], Bytes[5], Bytes[6], Bytes[7] };
+            byte[] z = new byte[4] { Bytes[8], Bytes[9], Bytes[10], Bytes[11] };
+            float X = BitConverter.ToSingle(x);
+            float Y = BitConverter.ToSingle(y);
+            float Z = BitConverter.ToSingle(z);
+            Console.WriteLine("x: "+X);
+            Console.WriteLine("y: "+Y);
+            Console.WriteLine("z: "+Z);
             SetPosition(X, Y, Z);
         }
 

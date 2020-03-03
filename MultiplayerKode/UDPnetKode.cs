@@ -35,14 +35,14 @@ namespace MultiplayerKode
             server = new UdpClient(port);
             clientes = new IPEndPoint(IPAddress.Any, port);
             Console.WriteLine("Started Successfully!\n" +
-                "Version Alpha 0.0.2");
+                "Version Alpha 0.1.0");
             clock = new System.Timers.Timer(2000);
             clock.Elapsed += Clock_Elapsed;
-            //clock.Enabled = true;
+            clock.Enabled = true;
             clock.AutoReset = true;
             broad = new Thread(Sync);
             broad.Start();
-            Thread messages = new Thread(Mensagens);
+            Thread messages = new Thread(RecvMessage);
             messages.Start();
         }
 
@@ -176,10 +176,10 @@ namespace MultiplayerKode
                             }
                             break;
                         case @interface.ISignal.INPUT:
-
+                            //TODO
                             break;
                         case @interface.ISignal.CHAT:
-
+                            //TODO
                             break;
                     }
 
@@ -208,7 +208,6 @@ namespace MultiplayerKode
                             if (i != j)
                             {
                                 byte[] msg = package.GenerateMessage(@interface.ISignal.SYNC, users[i].GetPosition(), users[i].GetID());
-                                //msg = package.GetBytesFromMessage('|', "SYNC", users[i].GetPosition(), users[i].Id);
                                 Console.WriteLine("Sending: "+msg.Length+" Bits.");
                                 server.Send(msg, msg.Length, broadcast);
                             }
@@ -298,7 +297,8 @@ namespace MultiplayerKode
                         byte[] msg;
                         if (sync)
                         {
-                            msg = package.GetBytes("ping|" + users[i].Id);
+                            //msg = package.GetBytes("ping|" + users[i].Id);
+                            msg = package.GenerateMessage(@interface.ISignal.PING,users[i].GetID());
                             server.Send(msg, msg.Length, broadcast);
                             users[i].TimeOut++;
                         }
@@ -374,7 +374,7 @@ namespace MultiplayerKode
         /// <param name="Address">client's Address</param>
         /// <param name="_port"></param>
         ///
-        [Obsolete]
+        [Obsolete("Will be removed in the future. use sendDirect(byte signal) Instead")]
         public void sendDirect(string message, string Address, int _port)
         {
             IPEndPoint EP = new IPEndPoint(IPAddress.Parse(Address), _port);

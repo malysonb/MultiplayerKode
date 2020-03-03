@@ -10,12 +10,7 @@ namespace MultiplayerKode
     /// 
     class PackageManager
     {
-        /// <summary>
-        /// Generate a package to send to a client.
-        /// </summary>
-        /// <param name="args">Parameters to send</param>
-        /// <param name="token">token for the division</param>
-        /// <returns>a complete string token at a character</returns>
+        /*
         [Obsolete("Will be removed, Use the new one")]
         public string GenerateMessage(char token = '|', params object[] args)
         {
@@ -27,19 +22,29 @@ namespace MultiplayerKode
             }
             return complete;
         }
+        */
+
         /// <summary>
         /// New PackageSender
         /// </summary>
         /// <param name="signal"></param>
         /// <param name="args"></param>
         /// <returns></returns>
-        public byte[] GenerateMessage(byte signal, params byte[] args)
+        public byte[] GenerateMessage(byte signal, params byte[][] args)
         {
-            byte[] Package = new byte[args.Length + 1];
-            Package[0] = signal;
-            for (int i = 1; i < Package.Length; i++)
+            int length = 0;
+            for(int i = 0; i < args.Length; i++)
             {
-                Package[i] = args[i - 1];
+                length += args[i].Length;
+            }
+            byte[] Package = new byte[length+1];
+            Package[0] = signal;
+            for (int i = 0; i < args.Length; i++)
+            {
+                for(int j = 1; j < Package.Length; j++)
+                {
+                    Package[j] = args[i][j];
+                }
             }
             return Package;
         }
@@ -65,18 +70,6 @@ namespace MultiplayerKode
         }
 
         /// <summary>
-        /// Gets bytes from a string using a token to separate them
-        /// </summary>
-        /// <param name="token">token char to separate the message</param>
-        /// <param name="args">Arguments to send to another client</param>
-        /// <returns>An array of bytes</returns>
-        [Obsolete("Will be removed in the future")]
-        public byte[] GetBytesFromMessage(char token = '|', params object[] args)
-        {
-            return Encoding.ASCII.GetBytes(GenerateMessage(token, args));
-        }
-
-        /// <summary>
         /// Translates an array of bytes to an array of strings.
         /// </summary>
         /// <param name="array">Byte array</param>
@@ -96,5 +89,23 @@ namespace MultiplayerKode
         {
             return msg.Split(token);
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="start"></param>
+        /// <param name="end"></param>
+        /// <param name="byteArray"></param>
+        /// <returns></returns>
+        public byte[] TrimByteArray(int start, int end, byte[] byteArray)
+        {
+            byte[] result = new byte[start - end];
+            for(int i = start; i < end; i++)
+            {
+                result[i] = byteArray[i];
+            }
+            return result;
+        }
+
     }
 }

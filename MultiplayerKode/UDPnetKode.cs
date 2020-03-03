@@ -51,7 +51,8 @@ namespace MultiplayerKode
         /// </summary>
         private void Clock_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
-            send("",true);
+            //send("",true);
+            Broadcast(null, true);
         }
 
         /// <summary>
@@ -70,9 +71,9 @@ namespace MultiplayerKode
                     string[] mensagens = package.Translate(pacote).Split('|');
                     if (mensagens[0] == "Hello")
                     {
-                        sendDirect(package.GenerateMessage('|', "HANDSHAKE", IDcont), clientes.Address.ToString(), clientes.Port);
+                        //sendDirect(package.GenerateMessage('|', "HANDSHAKE", IDcont), clientes.Address.ToString(), clientes.Port);
                         users.Add(inserir(clientes.Address.ToString(), clientes.Port, mensagens[1]));
-                        send(package.GenerateMessage('|', "INFO", "Join", SearchByAddres(clientes.Address.ToString(), clientes.Port).Id, SearchByAddres(clientes.Address.ToString(), clientes.Port).Nome,2));
+                        //send(package.GenerateMessage('|', "INFO", "Join", SearchByAddres(clientes.Address.ToString(), clientes.Port).Id, SearchByAddres(clientes.Address.ToString(), clientes.Port).Nome,2));
                     }
                     else if (mensagens[0] == "bye")
                     {
@@ -144,7 +145,10 @@ namespace MultiplayerKode
                     switch (Pkg[0])
                     {
                         case @interface.ISignal.HELLO:
-
+                            byte[] idtosend = new byte[4];
+                            idtosend = BitConverter.GetBytes(IDcont);
+                            sendDirect(@interface.ISignal.HANDSHAKE,idtosend,clientes.Address,clientes.Port);
+                            inserir(clientes.Address.ToString(), clientes.Port,package.Translate(package.TrimByteArray(1,Pkg.Length,Pkg)));
                             break;
                         case @interface.ISignal.GOODBYE:
                             if(SearchByAddres(clientes.Address.ToString(), clientes.Port) != null)
@@ -203,8 +207,8 @@ namespace MultiplayerKode
                         {
                             if (i != j)
                             {
-                                byte[] msg;
-                                msg = package.GetBytesFromMessage('|', "SYNC", users[i].GetPosition(), users[i].Id);
+                                byte[] msg = package.GenerateMessage(@interface.ISignal.SYNC, users[i].GetPosition(), users[i].GetID());
+                                //msg = package.GetBytesFromMessage('|', "SYNC", users[i].GetPosition(), users[i].Id);
                                 Console.WriteLine("Sending: "+msg.Length+" Bits.");
                                 server.Send(msg, msg.Length, broadcast);
                             }
@@ -261,6 +265,47 @@ namespace MultiplayerKode
                             msg = package.GetBytes(aviso);
                             server.Send(msg, msg.Length, broadcast);
                             Console.WriteLine("Sent: " + aviso);
+                        }
+                    }
+                    catch
+                    {
+                        remove(users[i].Address, users[i].Port, "Problem");
+                    }
+                }
+            }
+        }
+
+        public void Broadcast(byte[] Custom, bool sync)
+        {
+            /*if (aviso == "EXIT" || aviso == "exit" || aviso == "stop")
+            {
+                alive = false;
+                server.Close();
+                clock.Enabled = false;
+                clock.AutoReset = false;
+            }*/
+            for (int i = 0; i < users.Count; i++)
+            {
+                if (users[i].TimeOut >= 10)
+                {
+                    remove(users[i].Address, users[i].Port, "Timed Out");
+                }
+                else
+                {
+                    try
+                    {
+                        broadcast = users[i].EndPoint;
+                        byte[] msg;
+                        if (sync)
+                        {
+                            msg = package.GetBytes("ping|" + users[i].Id);
+                            server.Send(msg, msg.Length, broadcast);
+                            users[i].TimeOut++;
+                        }
+                        if (Custom != null || Custom.Length > 0)
+                        {
+                            server.Send(Custom, Custom.Length, broadcast);
+                            Console.WriteLine("Sent: " + package.Translate(Custom));
                         }
                     }
                     catch
@@ -338,6 +383,14 @@ namespace MultiplayerKode
             Console.WriteLine("Sending HandShake");
         }
 
+        public void sendDirect(byte signal, byte[] message, IPAddress Address, int _port)
+        {
+            IPEndPoint EP = new IPEndPoint(Address, _port);
+            byte[] msg = package.GenerateMessage(signal, message);
+            server.Send(msg, msg.Length, EP);
+            Console.WriteLine("Sending Handshake new");
+        }
+
         /// <summary>
         /// removes a client from the list
         /// </summary>
@@ -355,7 +408,7 @@ namespace MultiplayerKode
                     string nome = users[i].Nome;
                     users.RemoveAt(i);
                     Console.WriteLine("Disconnected: " + nome);
-                    send(package.GenerateMessage('|', "INFO", "Left", id, nome));
+                    //send(package.GenerateMessage('|', "INFO", "Left", id, nome));
                     break;
                 }
             }

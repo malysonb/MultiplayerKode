@@ -55,6 +55,11 @@ namespace MultiplayerKode
             return player.Position.X + ";" + player.Position.Y + ";" + player.Position.Z;
         }
 
+        public byte[] GetID()
+        {
+            return BitConverter.GetBytes(Id);
+        }
+
         public byte[] GetPosition()
         {
             byte[] x = new byte[4], y = new byte[4], z = new byte[4];

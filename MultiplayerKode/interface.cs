@@ -15,6 +15,7 @@ namespace MultiplayerKode
             const byte HELLO = 4;
             const byte GOODBYE = 5;
             const byte JOIN = 6;
+            const byte HANDSHAKE = 7;
         }
     }
 }

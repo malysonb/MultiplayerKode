@@ -5,7 +5,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Numerics;
 
-namespace MultiplayerKode
+namespace RadikoNetcode
 {
     public class Client
     {

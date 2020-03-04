@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text;
 
-namespace MultiplayerKode
+namespace RadikoNetcode
 {
     /// <summary>
     /// PACKAGE MANAGER FOR SERVER<br/>

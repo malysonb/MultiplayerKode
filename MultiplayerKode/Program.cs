@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading;
 
-namespace MultiplayerKode
+namespace RadikoNetcode
 {
     class Program
     {

@@ -11,7 +11,7 @@ using System.Threading;
     Alert: It's not cheatproof yet.
 */
 
-namespace MultiplayerKode
+namespace RadikoNetcode
 {
     class UDPnetKode
     {

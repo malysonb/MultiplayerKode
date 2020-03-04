@@ -61,7 +61,7 @@ namespace MultiplayerKode
         /// 
         [Obsolete("Will be removed in the future, a new one will substitute this\n" +
             "Use RecvMessage Instead")]
-        public void Mensagens()
+        public void Messages()
         {
             while (alive)
             {
@@ -120,17 +120,6 @@ namespace MultiplayerKode
                 }
             }
         }
-
-        /*public interface SignalInterface
-        {
-            const byte PING = 0;
-            const byte SYNC = 1;
-            const byte CHAT = 2;
-            const byte INPUT = 3;
-            const byte HELLO = 4;
-            const byte GOODBYE = 5;
-            const byte JOIN = 6;
-        }*/
 
         /// <summary>
         /// Server receives messages from the clients

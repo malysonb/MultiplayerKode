@@ -1,4 +1,4 @@
-# RadikoMultiplayer
+# Radiko Multiplayer Netcode
 Simple netcode for multiplayer games independent of the game engine.
 Framework: .Net Core 3.1
 

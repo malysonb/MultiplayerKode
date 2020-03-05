@@ -10,20 +10,6 @@ namespace RadikoNetcode
     /// 
     class PackageManager
     {
-        /*
-        [Obsolete("Will be removed, Use the new one")]
-        public string GenerateMessage(char token = '|', params object[] args)
-        {
-            string complete = "";
-            foreach (var arg in args)
-            {
-                complete += arg;
-                complete += token;
-            }
-            return complete;
-        }
-        */
-
         /// <summary>
         /// New PackageSender
         /// </summary>

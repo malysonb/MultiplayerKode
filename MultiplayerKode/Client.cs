@@ -62,7 +62,7 @@ namespace RadikoNetcode
 
         public byte[] GetPosition()
         {
-            byte[] x = new byte[4], y = new byte[4], z = new byte[4];
+            byte[] x, y, z;
             x = BitConverter.GetBytes(player.Position.X);
             y = BitConverter.GetBytes(player.Position.Y);
             z = BitConverter.GetBytes(player.Position.Z);
@@ -116,7 +116,7 @@ namespace RadikoNetcode
 
         public void SetPositionByByteArray(byte[] Bytes)
         {
-            byte[] x = new byte[4] {Bytes[0], Bytes[1], Bytes[2], Bytes[3] };
+            byte[] x = new byte[4] { Bytes[0], Bytes[1], Bytes[2], Bytes[3] };
             byte[] y = new byte[4] { Bytes[4], Bytes[5], Bytes[6], Bytes[7] };
             byte[] z = new byte[4] { Bytes[8], Bytes[9], Bytes[10], Bytes[11] };
             float X = BitConverter.ToSingle(x);

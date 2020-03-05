@@ -218,12 +218,12 @@ namespace RadikoNetcode
         /// <summary>
         /// Send a ping signal to keep connection alive.
         /// </summary>
-        /// <param name="aviso">Send a custom message</param>
+        /// <param name="advert">Send a custom message</param>
         /// 
-        [Obsolete]
-        public void send(string aviso = "",bool sync = false)
+        [Obsolete("Will be removed in the future, use Broadcast instead")]
+        public void send(string advert = "",bool sync = false)
         {
-            if(aviso == "EXIT" || aviso == "exit" || aviso == "stop")
+            if(advert == "EXIT" || advert == "exit" || advert == "stop")
             {
                 alive = false;
                 server.Close();
@@ -248,11 +248,11 @@ namespace RadikoNetcode
                             server.Send(msg, msg.Length, broadcast);
                             users[i].TimeOut++;
                         }
-                        if (aviso.Length > 0)
+                        if (advert.Length > 0)
                         {
-                            msg = package.GetBytes(aviso);
+                            msg = package.GetBytes(advert);
                             server.Send(msg, msg.Length, broadcast);
-                            Console.WriteLine("Sent: " + aviso);
+                            Console.WriteLine("Sent: " + advert);
                         }
                     }
                     catch
@@ -265,13 +265,7 @@ namespace RadikoNetcode
 
         public void Broadcast(byte[] Custom, bool sync)
         {
-            /*if (aviso == "EXIT" || aviso == "exit" || aviso == "stop")
-            {
-                alive = false;
-                server.Close();
-                clock.Enabled = false;
-                clock.AutoReset = false;
-            }*/
+            //TODO: FRONTEND TO THE SERVER.
             for (int i = 0; i < users.Count; i++)
             {
                 if (users[i].TimeOut >= 10)
@@ -372,9 +366,30 @@ namespace RadikoNetcode
             Console.WriteLine("Sending HandShake");
         }
 
+        /// <summary>
+        /// Send a message directly to a address
+        /// </summary>
+        /// <param name="signal">Signal token to an server command.</param>
+        /// <param name="message">Byte array to be sent to the server.</param>
+        /// <param name="Address">IP Address of the client.</param>
+        /// <param name="_port">Port of the server.</param>
         public void sendDirect(byte signal, byte[] message, IPAddress Address, int _port)
         {
             IPEndPoint EP = new IPEndPoint(Address, _port);
+            byte[] msg = package.GenerateMessage(signal, message);
+            server.Send(msg, msg.Length, EP);
+            Console.WriteLine("Sending Handshake new");
+        }
+        /// <summary>
+        /// Send a message directly to a address
+        /// </summary>
+        /// <param name="signal">Signal token to an server command.</param>
+        /// <param name="message">Byte array to be sent to the server.</param>
+        /// <param name="ID">ID of the user</param>
+        public void sendDirect(byte signal, byte[] message, int ID = -1)
+        {
+
+            IPEndPoint EP = ProcurarPorID(ID).EndPoint;
             byte[] msg = package.GenerateMessage(signal, message);
             server.Send(msg, msg.Length, EP);
             Console.WriteLine("Sending Handshake new");

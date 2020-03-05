@@ -11,11 +11,11 @@ namespace RadikoNetcode
     class PackageManager
     {
         /// <summary>
-        /// New PackageSender
+        /// Will generate an ready message to send
         /// </summary>
-        /// <param name="signal"></param>
-        /// <param name="args"></param>
-        /// <returns></returns>
+        /// <param name="signal">Its a token to recognize the command</param>
+        /// <param name="args">Array of array of bytes</param>
+        /// <returns>An array of bytes.</returns>
         public byte[] GenerateMessage(byte signal, params byte[][] args)
         {
             int length = 0;
@@ -65,24 +65,14 @@ namespace RadikoNetcode
         {
             return Encoding.ASCII.GetString(array).Split(token);
         }
-        /// <summary>
-        /// Converts an array of strings inside a string.
-        /// </summary>
-        /// <param name="msg">String with a hidden string array</param>
-        /// <param name="token">Token to separate the message</param>
-        /// <returns>An array of strings</returns>
-        public string[] Translate(string msg, char token = '|')
-        {
-            return msg.Split(token);
-        }
 
         /// <summary>
-        /// 
+        /// Trim an array of bytes inside an array of bytes
         /// </summary>
-        /// <param name="start"></param>
-        /// <param name="end"></param>
-        /// <param name="byteArray"></param>
-        /// <returns></returns>
+        /// <param name="start">index of the first byte</param>
+        /// <param name="end">index of the last byte (will not be added to the returned array)</param>
+        /// <param name="byteArray">byte array to be trimmed</param>
+        /// <returns>A trimmed byte array</returns>
         public byte[] TrimByteArray(int start, int end, byte[] byteArray)
         {
             byte[] result = new byte[start - end];

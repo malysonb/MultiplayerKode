@@ -29,13 +29,14 @@ namespace RadikoNetcode
         /// UDP Server for multiplayer games
         /// </summary>
         /// <param name="port">Port for listening</param>
-        public UDPnetKode(int port = 8484)
+        public UDPnetKode(int port)
         {
             this.port = port;
             server = new UdpClient(port);
             clientes = new IPEndPoint(IPAddress.Any, port);
             Console.WriteLine("Started Successfully!\n" +
-                "Version Alpha 0.1.0");
+                "Version Alpha 0.1.0\n" +
+                "Listening at port "+port);
             clock = new System.Timers.Timer(2000);
             clock.Elapsed += Clock_Elapsed;
             clock.Enabled = true;
@@ -59,7 +60,7 @@ namespace RadikoNetcode
         /// Where you receive your messages
         /// </summary>
         /// 
-        [Obsolete("Will be removed in the future, a new one will substitute this\n" +
+        [Obsolete("Not working anymore, still here just to help you to understand the code\nWill be removed in the future, a new one will substitute this\n" +
             "Use RecvMessage Instead")]
         public void Messages()
         {
@@ -161,7 +162,8 @@ namespace RadikoNetcode
                                 {
                                     pos[i - 1] = Pkg[i];
                                 }
-                                temp.SetPositionByByteArray(pos);
+                                //temp.SetPositionByByteArray(pos);
+                                temp.SetPositionByByteArray(package.TrimByteArray(1,14,Pkg));
                             }
                             break;
                         case @interface.ISignal.INPUT:
@@ -171,7 +173,6 @@ namespace RadikoNetcode
                             //TODO
                             break;
                     }
-
                 }
                 catch (SocketException e)
                 {
@@ -263,6 +264,11 @@ namespace RadikoNetcode
             }
         }
 
+        /// <summary>
+        /// Broadcast messages to all connected clients
+        /// </summary>
+        /// <param name="Custom">Custom bytearray to send to the clients.</param>
+        /// <param name="sync">if it is true, will sync players position.</param>
         public void Broadcast(byte[] Custom, bool sync)
         {
             //TODO: FRONTEND TO THE SERVER.
@@ -378,7 +384,7 @@ namespace RadikoNetcode
             IPEndPoint EP = new IPEndPoint(Address, _port);
             byte[] msg = package.GenerateMessage(signal, message);
             server.Send(msg, msg.Length, EP);
-            Console.WriteLine("Sending Handshake new");
+            Console.WriteLine("Sending Handshake");
         }
         /// <summary>
         /// Send a message directly to a address
@@ -392,7 +398,6 @@ namespace RadikoNetcode
             IPEndPoint EP = ProcurarPorID(ID).EndPoint;
             byte[] msg = package.GenerateMessage(signal, message);
             server.Send(msg, msg.Length, EP);
-            Console.WriteLine("Sending Handshake new");
         }
 
         /// <summary>
@@ -412,6 +417,7 @@ namespace RadikoNetcode
                     string nome = users[i].Nome;
                     users.RemoveAt(i);
                     Console.WriteLine("Disconnected: " + nome);
+                    Broadcast(package.GenerateMessage(@interface.ISignal.GOODBYE, BitConverter.GetBytes(id)),false);
                     //send(package.GenerateMessage('|', "INFO", "Left", id, nome));
                     break;
                 }

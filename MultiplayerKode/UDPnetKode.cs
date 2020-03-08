@@ -135,10 +135,13 @@ namespace RadikoNetcode
                     switch (Pkg[0])
                     {
                         case IPkgInterf.IByte.HELLO:
-                            byte[] idtosend = new byte[4];
-                            idtosend = BitConverter.GetBytes(IDcont);
-                            sendDirect(IPkgInterf.IByte.HANDSHAKE,idtosend,clientes.Address,clientes.Port);
-                            inserir(clientes.Address.ToString(), clientes.Port,package.Translate(package.TrimByteArray(1,Pkg.Length,Pkg)));
+                            if (SearchByAddres(clientes.Address.ToString(), clientes.Port) == null)
+                            {
+                                byte[] idtosend = new byte[4];
+                                idtosend = BitConverter.GetBytes(IDcont);
+                                sendDirect(IPkgInterf.IByte.HANDSHAKE, idtosend, clientes.Address, clientes.Port);
+                                inserir(clientes.Address.ToString(), clientes.Port, package.Translate(package.TrimByteArray(1, Pkg.Length, Pkg)));
+                            }
                             break;
                         case IPkgInterf.IByte.GOODBYE:
                             if (SearchByAddres(clientes.Address.ToString(), clientes.Port) != null)
@@ -273,9 +276,9 @@ namespace RadikoNetcode
                             Console.WriteLine("Sent: " + advert);
                         }
                     }
-                    catch
+                    catch (SocketException e)
                     {
-                        remove(users[i].Address, users[i].Port, "Problem");
+                        remove(users[i].Address, users[i].Port, "Problem: "+e);
                     }
                 }
             }
@@ -307,15 +310,15 @@ namespace RadikoNetcode
                             server.Send(msg, msg.Length, broadcast);
                             users[i].TimeOut++;
                         }
-                        if (Custom != null || Custom.Length > 0)
+                        if (Custom != null)
                         {
                             server.Send(Custom, Custom.Length, broadcast);
                             Console.WriteLine("Sent: " + package.Translate(Custom));
                         }
                     }
-                    catch
+                    catch (SocketException e)
                     {
-                        remove(users[i].Address, users[i].Port, "Problem");
+                        remove(users[i].Address, users[i].Port, "Problem: "+e);
                     }
                 }
             }

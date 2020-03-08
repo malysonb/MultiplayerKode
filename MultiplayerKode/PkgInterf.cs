@@ -4,6 +4,9 @@ using System.Text;
 
 namespace RadikoNetcode
 {
+    /// <summary>
+    /// Interface version 1.0
+    /// </summary>
     interface IPkgInterf
     {
         public interface IByte

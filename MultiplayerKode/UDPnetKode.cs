@@ -141,17 +141,21 @@ namespace RadikoNetcode
                             inserir(clientes.Address.ToString(), clientes.Port,package.Translate(package.TrimByteArray(1,Pkg.Length,Pkg)));
                             break;
                         case @interface.ISignal.GOODBYE:
-                            if(SearchByAddres(clientes.Address.ToString(), clientes.Port) != null)
+                            if (SearchByAddres(clientes.Address.ToString(), clientes.Port) != null)
                             {
                                 Client temp = SearchByAddres(clientes.Address.ToString(), clientes.Port);
                                 remove(temp.Id, "Disconnected Safely");
                             }
+                            else
+                                Console.WriteLine("Not connected");
                             break;
                         case @interface.ISignal.PING:
                             if(SearchByAddres(clientes.Address.ToString(), clientes.Port) != null)
                             {
                                 SearchByAddres(clientes.Address.ToString(), clientes.Port).TimeOut = 0;
                             }
+                            else
+                                Console.WriteLine("Not connected");
                             break;
                         case @interface.ISignal.SYNC:
                             if(SearchByAddres(clientes.Address.ToString(),clientes.Port) != null)
@@ -165,12 +169,17 @@ namespace RadikoNetcode
                                 //temp.SetPositionByByteArray(pos);
                                 temp.SetPositionByByteArray(package.TrimByteArray(1,14,Pkg));
                             }
+                            else
+                                Console.WriteLine("Not connected");
                             break;
                         case @interface.ISignal.INPUT:
                             //TODO
                             break;
                         case @interface.ISignal.CHAT:
                             //TODO
+                            break;
+                        default:
+                            Console.WriteLine(Pkg + "\nTranslated to: " + package.Translate(Pkg));
                             break;
                     }
                 }
@@ -276,7 +285,7 @@ namespace RadikoNetcode
             {
                 if (users[i].TimeOut >= 10)
                 {
-                    remove(users[i].Address, users[i].Port, "Timed Out");
+                    remove(users[i].Id, "Timed Out");
                 }
                 else
                 {

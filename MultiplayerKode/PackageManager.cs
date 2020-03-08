@@ -29,7 +29,7 @@ namespace RadikoNetcode
             {
                 for(int j = 1; j < Package.Length; j++)
                 {
-                    Package[j] = args[i][j];
+                    Package[j] = args[i][j-1];
                 }
             }
             return Package;
@@ -75,10 +75,10 @@ namespace RadikoNetcode
         /// <returns>A trimmed byte array</returns>
         public byte[] TrimByteArray(int start, int end, byte[] byteArray)
         {
-            byte[] result = new byte[start - end];
+            byte[] result = new byte[end - start];
             for(int i = start; i < end; i++)
             {
-                result[i] = byteArray[i];
+                result[i-1] = byteArray[i];
             }
             return result;
         }

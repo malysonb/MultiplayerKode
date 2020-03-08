@@ -179,7 +179,15 @@ namespace RadikoNetcode
                             //TODO
                             break;
                         default:
-                            Console.WriteLine(Pkg + "\nTranslated to: " + package.Translate(Pkg));
+                            if (SearchByAddres(clientes.Address.ToString(), clientes.Port) != null)
+                            {
+                                Client clien = SearchByAddres(clientes.Address.ToString(), clientes.Port);
+                                Console.WriteLine(clien.Nome + ": " + package.Translate(Pkg) + "(without use chat command)");
+                            }
+                            else
+                            {
+                                Console.WriteLine("Invalid Session!");
+                            }
                             break;
                     }
                 }
@@ -295,7 +303,6 @@ namespace RadikoNetcode
                         byte[] msg;
                         if (sync)
                         {
-                            //msg = package.GetBytes("ping|" + users[i].Id);
                             msg = package.GenerateMessage(@interface.ISignal.PING,users[i].GetID());
                             server.Send(msg, msg.Length, broadcast);
                             users[i].TimeOut++;
@@ -361,6 +368,7 @@ namespace RadikoNetcode
         {
             Client obj = new Client(Address, _port, nome, IDcont);
             Console.WriteLine("Welcome! " + nome + " with the ID: " + IDcont);
+            users.Add(obj);
             IDcont++;
             return obj;
         }

@@ -16,7 +16,7 @@ namespace RadikoNetcode
         private Player player = null;
         private IPEndPoint endPoint;
         private int id;
-        private int timeOut;
+        private int timeOut = 0;
 
         public Client(string Address, int port, string nome, int id = 0)
         {

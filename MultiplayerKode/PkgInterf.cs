@@ -4,9 +4,9 @@ using System.Text;
 
 namespace RadikoNetcode
 {
-    interface @interface
+    interface IPkgInterf
     {
-        public interface ISignal
+        public interface IByte
         {
             const byte PING = (byte)0;
             const byte SYNC = (byte)1;

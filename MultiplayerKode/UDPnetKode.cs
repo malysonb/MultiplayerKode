@@ -134,13 +134,13 @@ namespace RadikoNetcode
                     byte[] Pkg = server.Receive(ref clientes);
                     switch (Pkg[0])
                     {
-                        case @interface.ISignal.HELLO:
+                        case IPkgInterf.IByte.HELLO:
                             byte[] idtosend = new byte[4];
                             idtosend = BitConverter.GetBytes(IDcont);
-                            sendDirect(@interface.ISignal.HANDSHAKE,idtosend,clientes.Address,clientes.Port);
+                            sendDirect(IPkgInterf.IByte.HANDSHAKE,idtosend,clientes.Address,clientes.Port);
                             inserir(clientes.Address.ToString(), clientes.Port,package.Translate(package.TrimByteArray(1,Pkg.Length,Pkg)));
                             break;
-                        case @interface.ISignal.GOODBYE:
+                        case IPkgInterf.IByte.GOODBYE:
                             if (SearchByAddres(clientes.Address.ToString(), clientes.Port) != null)
                             {
                                 Client temp = SearchByAddres(clientes.Address.ToString(), clientes.Port);
@@ -149,7 +149,7 @@ namespace RadikoNetcode
                             else
                                 Console.WriteLine("Not connected");
                             break;
-                        case @interface.ISignal.PING:
+                        case IPkgInterf.IByte.PING:
                             if(SearchByAddres(clientes.Address.ToString(), clientes.Port) != null)
                             {
                                 SearchByAddres(clientes.Address.ToString(), clientes.Port).TimeOut = 0;
@@ -157,7 +157,7 @@ namespace RadikoNetcode
                             else
                                 Console.WriteLine("Not connected");
                             break;
-                        case @interface.ISignal.SYNC:
+                        case IPkgInterf.IByte.SYNC:
                             if(SearchByAddres(clientes.Address.ToString(),clientes.Port) != null)
                             {
                                 Client temp = SearchByAddres(clientes.Address.ToString(), clientes.Port);
@@ -172,10 +172,10 @@ namespace RadikoNetcode
                             else
                                 Console.WriteLine("Not connected");
                             break;
-                        case @interface.ISignal.INPUT:
+                        case IPkgInterf.IByte.INPUT:
                             //TODO
                             break;
-                        case @interface.ISignal.CHAT:
+                        case IPkgInterf.IByte.CHAT:
                             //TODO
                             break;
                         default:
@@ -214,7 +214,7 @@ namespace RadikoNetcode
                         {
                             if (i != j)
                             {
-                                byte[] msg = package.GenerateMessage(@interface.ISignal.SYNC, users[i].GetPosition(), users[i].GetID());
+                                byte[] msg = package.GenerateMessage(IPkgInterf.IByte.SYNC, users[i].GetPosition(), users[i].GetID());
                                 Console.WriteLine("Sending: "+msg.Length+" Bits.");
                                 server.Send(msg, msg.Length, broadcast);
                             }
@@ -303,7 +303,7 @@ namespace RadikoNetcode
                         byte[] msg;
                         if (sync)
                         {
-                            msg = package.GenerateMessage(@interface.ISignal.PING,users[i].GetID());
+                            msg = package.GenerateMessage(IPkgInterf.IByte.PING,users[i].GetID());
                             server.Send(msg, msg.Length, broadcast);
                             users[i].TimeOut++;
                         }
@@ -434,7 +434,7 @@ namespace RadikoNetcode
                     string nome = users[i].Nome;
                     users.RemoveAt(i);
                     Console.WriteLine("Disconnected: " + nome);
-                    Broadcast(package.GenerateMessage(@interface.ISignal.GOODBYE, BitConverter.GetBytes(id)),false);
+                    Broadcast(package.GenerateMessage(IPkgInterf.IByte.GOODBYE, BitConverter.GetBytes(id)),false);
                     //send(package.GenerateMessage('|', "INFO", "Left", id, nome));
                     break;
                 }

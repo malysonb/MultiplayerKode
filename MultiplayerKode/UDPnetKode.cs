@@ -150,7 +150,7 @@ namespace RadikoNetcode
                                 remove(temp.Id, "Disconnected Safely");
                             }
                             else
-                                Console.WriteLine("Not connected");
+                                sendDirect(IPkgInterf.IByte.ERROR,clientes.Address,clientes.Port);
                             break;
                         case IPkgInterf.IByte.PING:
                             if(SearchByAddres(clientes.Address.ToString(), clientes.Port) != null)
@@ -158,7 +158,7 @@ namespace RadikoNetcode
                                 SearchByAddres(clientes.Address.ToString(), clientes.Port).TimeOut = 0;
                             }
                             else
-                                Console.WriteLine("Not connected");
+                                sendDirect(IPkgInterf.IByte.ERROR, clientes.Address, clientes.Port);
                             break;
                         case IPkgInterf.IByte.SYNC:
                             if(SearchByAddres(clientes.Address.ToString(),clientes.Port) != null)
@@ -173,7 +173,7 @@ namespace RadikoNetcode
                                 temp.SetPositionByByteArray(package.TrimByteArray(1,14,Pkg));
                             }
                             else
-                                Console.WriteLine("Not connected");
+                                sendDirect(IPkgInterf.IByte.ERROR, clientes.Address, clientes.Port);
                             break;
                         case IPkgInterf.IByte.INPUT:
                             //TODO
@@ -190,6 +190,7 @@ namespace RadikoNetcode
                             else
                             {
                                 Console.WriteLine("Invalid Session!");
+                                sendDirect(IPkgInterf.IByte.ERROR, clientes.Address, clientes.Port);
                             }
                             break;
                     }
@@ -407,7 +408,7 @@ namespace RadikoNetcode
             Console.WriteLine("Sending Handshake");
         }
         /// <summary>
-        /// Send a message directly to a address
+        /// Send a message directly to an ID
         /// </summary>
         /// <param name="signal">Signal token to an server command.</param>
         /// <param name="message">Byte array to be sent to the server.</param>
@@ -417,6 +418,21 @@ namespace RadikoNetcode
 
             IPEndPoint EP = ProcurarPorID(ID).EndPoint;
             byte[] msg = package.GenerateMessage(signal, message);
+            server.Send(msg, msg.Length, EP);
+        }
+
+        /// <summary>
+        /// Send just the signal to an Address. <br/>(idk if it can be useful)
+        /// </summary>
+        /// <param name="signal">Signal token to an server command.</param>
+        /// <param name="Address">IP Address of the client.</param>
+        /// <param name="_port">Port of the server.</param>
+        public void sendDirect(byte signal, IPAddress Address, int _port)
+        {
+
+            IPEndPoint EP = new IPEndPoint(Address, _port);
+            byte[] msg = new byte[1];
+            msg[0] = signal;
             server.Send(msg, msg.Length, EP);
         }
 

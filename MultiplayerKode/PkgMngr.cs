@@ -8,7 +8,7 @@ namespace RadikoNetcode
     /// VERSION 2.0
     /// </summary>
     /// 
-    class PackageManager
+    static class PkgMngr
     {
         /// <summary>
         /// Will generate an ready message to send
@@ -16,7 +16,7 @@ namespace RadikoNetcode
         /// <param name="signal">Its a token to recognize the command</param>
         /// <param name="args">Array of array of bytes</param>
         /// <returns>An array of bytes.</returns>
-        public byte[] GenerateMessage(byte signal, params byte[][] args)
+        public static byte[] GenerateMessage(byte signal, params byte[][] args)
         {
             int length = 0;
             for(int i = 0; i < args.Length; i++)
@@ -40,7 +40,7 @@ namespace RadikoNetcode
         /// </summary>
         /// <param name="bytearray">Byte array</param>
         /// <returns>A string</returns>
-        public string Translate(byte[] bytearray)
+        public static string Translate(byte[] bytearray)
         {
             return Encoding.ASCII.GetString(bytearray);
         }
@@ -50,7 +50,7 @@ namespace RadikoNetcode
         /// </summary>
         /// <param name="message">string to be translated to a byte array</param>
         /// <returns>byte array</returns>
-        public byte[] GetBytes(string _string)
+        public static byte[] GetBytes(string _string)
         {
             return Encoding.ASCII.GetBytes(_string);
         }
@@ -61,7 +61,7 @@ namespace RadikoNetcode
         /// <param name="array">Byte array</param>
         /// <param name="token">Token to separate the message</param>
         /// <returns>An array of strings</returns>
-        public string[] Translate(byte[] array, char token = '|')
+        public static string[] Translate(byte[] array, char token = '|')
         {
             return Encoding.ASCII.GetString(array).Split(token);
         }
@@ -73,7 +73,7 @@ namespace RadikoNetcode
         /// <param name="end">index of the last byte (will not be added to the returned array)</param>
         /// <param name="byteArray">byte array to be trimmed</param>
         /// <returns>A trimmed byte array</returns>
-        public byte[] TrimByteArray(int start, int end, byte[] byteArray)
+        public static byte[] TrimByteArray(int start, int end, byte[] byteArray)
         {
             byte[] result = new byte[end - start];
             for(int i = start; i < end; i++)

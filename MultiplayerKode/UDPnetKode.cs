@@ -22,7 +22,7 @@ namespace RadikoNetcode
         private int IDcont = 1;
         private List<Client> users = new List<Client>();
         private System.Timers.Timer clock;
-        private PackageManager package = new PackageManager();
+        //private PackageManager package = new PackageManager();
         private Thread broad;
 
         /// <summary>
@@ -69,7 +69,7 @@ namespace RadikoNetcode
                 try
                 {
                     byte[] pacote = server.Receive(ref clientes);
-                    string[] mensagens = package.Translate(pacote).Split('|');
+                    string[] mensagens = PkgMngr.Translate(pacote).Split('|');
                     if (mensagens[0] == "Hello")
                     {
                         //sendDirect(package.GenerateMessage('|', "HANDSHAKE", IDcont), clientes.Address.ToString(), clientes.Port);
@@ -98,7 +98,7 @@ namespace RadikoNetcode
                         if (SearchByAddres(clientes.Address.ToString(), clientes.Port) != null)
                         {
                             Client clien = SearchByAddres(clientes.Address.ToString(), clientes.Port);
-                            Console.WriteLine(clien.Nome + ": " + package.Translate(pacote));
+                            Console.WriteLine(clien.Nome + ": " + PkgMngr.Translate(pacote));
                         }
                     }
                     else
@@ -106,7 +106,7 @@ namespace RadikoNetcode
                         if(SearchByAddres(clientes.Address.ToString(),clientes.Port) != null)
                         {
                             Client clien = SearchByAddres(clientes.Address.ToString(), clientes.Port);
-                            Console.WriteLine(clien.Nome+": " + package.Translate(pacote)+ "(without use chat command)");
+                            Console.WriteLine(clien.Nome+": " + PkgMngr.Translate(pacote)+ "(without use chat command)");
                         }
                         else
                         {
@@ -117,7 +117,7 @@ namespace RadikoNetcode
                 }
                 catch (SocketException e)
                 {
-                    Console.WriteLine("Trying communication.");
+                    Console.WriteLine("Trying communication. error: " + e.Message);
                 }
             }
         }
@@ -140,7 +140,7 @@ namespace RadikoNetcode
                                 byte[] idtosend = new byte[4];
                                 idtosend = BitConverter.GetBytes(IDcont);
                                 sendDirect(IPkgInterf.IByte.HANDSHAKE, idtosend, clientes.Address, clientes.Port);
-                                inserir(clientes.Address.ToString(), clientes.Port, package.Translate(package.TrimByteArray(1, Pkg.Length, Pkg)));
+                                inserir(clientes.Address.ToString(), clientes.Port, PkgMngr.Translate(PkgMngr.TrimByteArray(1, Pkg.Length, Pkg)));
                             }
                             break;
                         case IPkgInterf.IByte.GOODBYE:
@@ -170,7 +170,7 @@ namespace RadikoNetcode
                                     pos[i - 1] = Pkg[i];
                                 }
                                 //temp.SetPositionByByteArray(pos);
-                                temp.SetPositionByByteArray(package.TrimByteArray(1,14,Pkg));
+                                temp.SetPositionByByteArray(PkgMngr.TrimByteArray(1,14,Pkg));
                             }
                             else
                                 sendDirect(IPkgInterf.IByte.ERROR, clientes.Address, clientes.Port);
@@ -185,7 +185,7 @@ namespace RadikoNetcode
                             if (SearchByAddres(clientes.Address.ToString(), clientes.Port) != null)
                             {
                                 Client clien = SearchByAddres(clientes.Address.ToString(), clientes.Port);
-                                Console.WriteLine(clien.Nome + ": " + package.Translate(Pkg) + "(without use chat command)");
+                                Console.WriteLine(clien.Nome + ": " + PkgMngr.Translate(Pkg) + "(without use chat command)");
                             }
                             else
                             {
@@ -197,7 +197,7 @@ namespace RadikoNetcode
                 }
                 catch (SocketException e)
                 {
-                    Console.WriteLine("Trying Communication.");
+                    Console.WriteLine("Trying Communication. error: " + e.Message);
                 }
             }
         }
@@ -218,7 +218,7 @@ namespace RadikoNetcode
                         {
                             if (i != j)
                             {
-                                byte[] msg = package.GenerateMessage(IPkgInterf.IByte.SYNC, users[i].GetPosition(), users[i].GetID());
+                                byte[] msg = PkgMngr.GenerateMessage(IPkgInterf.IByte.SYNC, users[i].GetPosition(), users[i].GetID());
                                 Console.WriteLine("Sending: "+msg.Length+" Bits.");
                                 server.Send(msg, msg.Length, broadcast);
                             }
@@ -266,13 +266,13 @@ namespace RadikoNetcode
                         byte[] msg;
                         if (sync)
                         {
-                            msg = package.GetBytes("ping|" + users[i].Id);
+                            msg = PkgMngr.GetBytes("ping|" + users[i].Id);
                             server.Send(msg, msg.Length, broadcast);
                             users[i].TimeOut++;
                         }
                         if (advert.Length > 0)
                         {
-                            msg = package.GetBytes(advert);
+                            msg = PkgMngr.GetBytes(advert);
                             server.Send(msg, msg.Length, broadcast);
                             Console.WriteLine("Sent: " + advert);
                         }
@@ -307,14 +307,14 @@ namespace RadikoNetcode
                         byte[] msg;
                         if (sync)
                         {
-                            msg = package.GenerateMessage(IPkgInterf.IByte.PING,users[i].GetID());
+                            msg = PkgMngr.GenerateMessage(IPkgInterf.IByte.PING,users[i].GetID());
                             server.Send(msg, msg.Length, broadcast);
                             users[i].TimeOut++;
                         }
                         if (Custom != null)
                         {
                             server.Send(Custom, Custom.Length, broadcast);
-                            Console.WriteLine("Sent: " + package.Translate(Custom));
+                            Console.WriteLine("Sent: " + PkgMngr.Translate(Custom));
                         }
                     }
                     catch (SocketException e)
@@ -388,7 +388,7 @@ namespace RadikoNetcode
         public void sendDirect(string message, string Address, int _port)
         {
             IPEndPoint EP = new IPEndPoint(IPAddress.Parse(Address), _port);
-            byte[] msg = package.GetBytes(message);
+            byte[] msg = PkgMngr.GetBytes(message);
             server.Send(msg, msg.Length, EP);
             Console.WriteLine("Sending HandShake");
         }
@@ -403,7 +403,7 @@ namespace RadikoNetcode
         public void sendDirect(byte signal, byte[] message, IPAddress Address, int _port)
         {
             IPEndPoint EP = new IPEndPoint(Address, _port);
-            byte[] msg = package.GenerateMessage(signal, message);
+            byte[] msg = PkgMngr.GenerateMessage(signal, message);
             server.Send(msg, msg.Length, EP);
             Console.WriteLine("Sending Handshake");
         }
@@ -417,7 +417,7 @@ namespace RadikoNetcode
         {
 
             IPEndPoint EP = ProcurarPorID(ID).EndPoint;
-            byte[] msg = package.GenerateMessage(signal, message);
+            byte[] msg = PkgMngr.GenerateMessage(signal, message);
             server.Send(msg, msg.Length, EP);
         }
 
@@ -453,7 +453,7 @@ namespace RadikoNetcode
                     string nome = users[i].Nome;
                     users.RemoveAt(i);
                     Console.WriteLine("Disconnected: " + nome);
-                    Broadcast(package.GenerateMessage(IPkgInterf.IByte.GOODBYE, BitConverter.GetBytes(id)),false);
+                    Broadcast(PkgMngr.GenerateMessage(IPkgInterf.IByte.GOODBYE, BitConverter.GetBytes(id)),false);
                     //send(package.GenerateMessage('|', "INFO", "Left", id, nome));
                     break;
                 }

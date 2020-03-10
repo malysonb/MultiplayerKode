@@ -4,7 +4,7 @@ using System.Text;
 namespace RadikoNetcode
 {
     /// <summary>
-    /// PACKAGE MANAGER FOR SERVER<br/>
+    /// PACKAGE MANAGER MODULE FOR RADIKO MULTIPLAYER NETCODE SERVER<br/>
     /// VERSION 3.0
     /// </summary>
     /// 

@@ -7,7 +7,7 @@ namespace RadikoNetcode
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("[Starting Radiko Multiplayer NetKode!]");
+            Console.WriteLine("[Starting Radiko Multiplayer Netcode!]");
             UDPnetKode Server = new UDPnetKode(8484);
             while (Server.alive)
             {

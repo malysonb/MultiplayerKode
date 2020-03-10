@@ -5,11 +5,12 @@ using System.Text;
 namespace RadikoNetcode
 {
     /// <summary>
-    /// Interface version 1.0
+    /// INTERFACE FOR RADIKO MULTIPLAYER NETCODE<br/>
+    /// VERSION: 1.1
     /// </summary>
     interface IPkgInterf
     {
-        public interface IByte
+        public interface IHeader
         {
             const byte PING = 0;
             const byte SYNC = 1;

@@ -163,20 +163,25 @@ namespace RadikoNetcode
                         case IPkgInterf.IByte.SYNC:
                             if(SearchByAddres(clientes.Address.ToString(),clientes.Port) != null)
                             {
+                                /*1-XXXX-YYYY-ZZZZ*/
                                 Client temp = SearchByAddres(clientes.Address.ToString(), clientes.Port);
-                                byte[] pos = new byte[12];
-                                for(int i = 1; i <= 12; i++)
-                                {
-                                    pos[i - 1] = Pkg[i];
-                                }
-                                //temp.SetPositionByByteArray(pos);
-                                temp.SetPositionByByteArray(PkgMngr.TrimByteArray(1,14,Pkg));
+                                temp.SetPositionByByteArray(PkgMngr.TrimByteArray(1,13,Pkg));
                             }
                             else
                                 sendDirect(IPkgInterf.IByte.ERROR, clientes.Address, clientes.Port);
                             break;
                         case IPkgInterf.IByte.INPUT:
                             //TODO
+                            if (SearchByAddres(clientes.Address.ToString(), clientes.Port) != null)
+                            {
+                                /*3-XXXX-YYYY-ZZZZ-xxxx-yyyy-zzzz-I-A*/
+                                Client temp = SearchByAddres(clientes.Address.ToString(), clientes.Port);
+                                temp.SetPositionByByteArray(PkgMngr.TrimByteArray(1, 13, Pkg));
+                                temp.SetRotationByByteArray(PkgMngr.TrimByteArray(13, 25, Pkg));
+                                Broadcast(Pkg,false);
+                            }
+                            else
+                                sendDirect(IPkgInterf.IByte.ERROR, clientes.Address, clientes.Port);
                             break;
                         case IPkgInterf.IByte.CHAT:
                             //TODO
@@ -185,7 +190,7 @@ namespace RadikoNetcode
                             if (SearchByAddres(clientes.Address.ToString(), clientes.Port) != null)
                             {
                                 Client clien = SearchByAddres(clientes.Address.ToString(), clientes.Port);
-                                Console.WriteLine(clien.Nome + ": " + PkgMngr.Translate(Pkg) + "(without use chat command)");
+                                Console.WriteLine(clien.Nome + ": " + PkgMngr.Translate(Pkg) + " (Using an unkown header)");
                             }
                             else
                             {
@@ -454,7 +459,6 @@ namespace RadikoNetcode
                     users.RemoveAt(i);
                     Console.WriteLine("Disconnected: " + nome);
                     Broadcast(PkgMngr.GenerateMessage(IPkgInterf.IByte.GOODBYE, BitConverter.GetBytes(id)),false);
-                    //send(package.GenerateMessage('|', "INFO", "Left", id, nome));
                     break;
                 }
             }

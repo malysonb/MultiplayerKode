@@ -5,7 +5,7 @@ namespace RadikoNetcode
 {
     /// <summary>
     /// PACKAGE MANAGER FOR SERVER<br/>
-    /// VERSION 2.0
+    /// VERSION 3.0
     /// </summary>
     /// 
     static class PkgMngr

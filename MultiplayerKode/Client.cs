@@ -7,6 +7,9 @@ using System.Numerics;
 
 namespace RadikoNetcode
 {
+    /// <summary>
+    /// Server Representation of a client.
+    /// </summary>
     public class Client
     {
         private String address;
@@ -100,6 +103,15 @@ namespace RadikoNetcode
             Player.Position = temp;
         }
 
+        public void SetRotation(float X, float Y, float Z)
+        {
+            Vector3 temp = Player.Rotation;
+            temp.X = X;
+            temp.Y = Y;
+            temp.Z = Z;
+            player.Rotation = temp;
+        }
+
         /// <summary>
         /// Set the position of a player by a raw position string
         /// </summary>
@@ -116,16 +128,52 @@ namespace RadikoNetcode
 
         public void SetPositionByByteArray(byte[] Bytes)
         {
-            byte[] x = new byte[4] { Bytes[0], Bytes[1], Bytes[2], Bytes[3] };
-            byte[] y = new byte[4] { Bytes[4], Bytes[5], Bytes[6], Bytes[7] };
-            byte[] z = new byte[4] { Bytes[8], Bytes[9], Bytes[10], Bytes[11] };
-            float X = BitConverter.ToSingle(x);
-            float Y = BitConverter.ToSingle(y);
-            float Z = BitConverter.ToSingle(z);
-            Console.WriteLine("x: "+X);
-            Console.WriteLine("y: "+Y);
-            Console.WriteLine("z: "+Z);
-            SetPosition(X, Y, Z);
+            if(Bytes.Length > 12)
+            {
+                throw new ArgumentOutOfRangeException("The Byte array is too big, it should be only 12 bytes.");
+            }
+            else if(Bytes.Length < 12)
+            {
+                throw new ArgumentOutOfRangeException("The Byte array is too short, it should be 12 bytes.");
+            }
+            else
+            {
+                byte[] x = new byte[4] { Bytes[0], Bytes[1], Bytes[2], Bytes[3] };
+                byte[] y = new byte[4] { Bytes[4], Bytes[5], Bytes[6], Bytes[7] };
+                byte[] z = new byte[4] { Bytes[8], Bytes[9], Bytes[10], Bytes[11] };
+                float X = BitConverter.ToSingle(x);
+                float Y = BitConverter.ToSingle(y);
+                float Z = BitConverter.ToSingle(z);
+                Console.WriteLine("x: " + X);
+                Console.WriteLine("y: " + Y);
+                Console.WriteLine("z: " + Z);
+                SetPosition(X, Y, Z);
+            }
+        }
+
+        public void SetRotationByByteArray(byte[] Bytes)
+        {
+            if (Bytes.Length > 12)
+            {
+                throw new ArgumentOutOfRangeException("The Byte array is too big, it should be only 12 bytes.");
+            }
+            else if (Bytes.Length < 12)
+            {
+                throw new ArgumentOutOfRangeException("The Byte array is too short, it should be 12 bytes.");
+            }
+            else
+            {
+                byte[] x = new byte[4] { Bytes[0], Bytes[1], Bytes[2], Bytes[3] };
+                byte[] y = new byte[4] { Bytes[4], Bytes[5], Bytes[6], Bytes[7] };
+                byte[] z = new byte[4] { Bytes[8], Bytes[9], Bytes[10], Bytes[11] };
+                float X = BitConverter.ToSingle(x);
+                float Y = BitConverter.ToSingle(y);
+                float Z = BitConverter.ToSingle(z);
+                Console.WriteLine("x: " + X);
+                Console.WriteLine("y: " + Y);
+                Console.WriteLine("z: " + Z);
+                SetRotation(X, Y, Z);
+            }
         }
 
         /// <summary>

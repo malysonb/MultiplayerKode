@@ -9,7 +9,8 @@ namespace RadikoNetcode
         {
             Console.WriteLine("[Starting Radiko Multiplayer Netcode!]");
             UDPnetKode Server = new UDPnetKode(8484);
-            while (Server.alive)
+            WSServer Wss = new WSServer(Server);
+            while (Server.alive == true)
             {
                 Thread.Sleep(500);
             }

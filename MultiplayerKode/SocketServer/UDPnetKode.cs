@@ -66,72 +66,6 @@ namespace RadikoNetcode
         }
 
         /// <summary>
-        /// Where you receive your messages
-        /// </summary>
-        /// 
-        [Obsolete("Not working anymore, still here just to help you to understand the code\nWill be removed in the future, a new one will substitute this\n" +
-            "Use RecvMessage Instead")]
-        public void Messages()
-        {
-            while (alive)
-            {
-                try
-                {
-                    byte[] pacote = server.Receive(ref clientes);
-                    string[] mensagens = PkgMngr.Translate(pacote).Split('|');
-                    if (mensagens[0] == "Hello")
-                    {
-                        //sendDirect(package.GenerateMessage('|', "HANDSHAKE", IDcont), clientes.Address.ToString(), clientes.Port);
-                        users.Add(inserir(clientes.Address.ToString(), clientes.Port, mensagens[1]));
-                        //send(package.GenerateMessage('|', "INFO", "Join", SearchByAddres(clientes.Address.ToString(), clientes.Port).Id, SearchByAddres(clientes.Address.ToString(), clientes.Port).Nome,2));
-                    }
-                    else if (mensagens[0] == "bye")
-                    {
-                        remove(clientes.Address.ToString(), clientes.Port, "Disconnected safely");
-                    }
-                    else if (mensagens[0] == "pong")
-                    {
-                        SearchByAddres(clientes.Address.ToString(), clientes.Port).TimeOut = 0;
-                    }
-                    else if( mensagens[0] == "SYNC")
-                    {
-                        if (ProcurarPorID(Int32.Parse(mensagens[2])) != null)
-                        {
-                            Client cliente = ProcurarPorID(Int32.Parse(mensagens[2]));
-                            Player jogador = cliente.Player;
-                            cliente.SetPositionByString(mensagens[1]);
-                        }
-                    }
-                    else if(mensagens[0] == "CHAT")
-                    {
-                        if (SearchByAddres(clientes.Address.ToString(), clientes.Port) != null)
-                        {
-                            Client clien = SearchByAddres(clientes.Address.ToString(), clientes.Port);
-                            Console.WriteLine(clien.Nome + ": " + PkgMngr.Translate(pacote));
-                        }
-                    }
-                    else
-                    {
-                        if(SearchByAddres(clientes.Address.ToString(),clientes.Port) != null)
-                        {
-                            Client clien = SearchByAddres(clientes.Address.ToString(), clientes.Port);
-                            Console.WriteLine(clien.Nome+": " + PkgMngr.Translate(pacote)+ "(without use chat command)");
-                        }
-                        else
-                        {
-                            Console.WriteLine("Invalid Session!");
-                            sendDirect("PleaseConnect", clientes.Address.ToString(), clientes.Port);
-                        }
-                    }  
-                }
-                catch (SocketException e)
-                {
-                    Console.WriteLine("Trying communication. error: " + e.Message);
-                }
-            }
-        }
-
-        /// <summary>
         /// Server receives messages from the clients
         /// </summary>
         public void RecvMessage()
@@ -248,54 +182,6 @@ namespace RadikoNetcode
             if (users.Count == 0)
             {
                 Thread.Sleep(50);
-            }
-        }
-
-        /// <summary>
-        /// Send a ping signal to keep connection alive.
-        /// </summary>
-        /// <param name="advert">Send a custom message</param>
-        /// 
-        [Obsolete("Will be removed in the future, use Broadcast instead")]
-        public void send(string advert = "",bool sync = false)
-        {
-            if(advert == "EXIT" || advert == "exit" || advert == "stop")
-            {
-                alive = false;
-                server.Close();
-                clock.Enabled = false;
-                clock.AutoReset = false;
-            }
-            for(int i = 0; i < users.Count; i++)
-            {
-                if (users[i].TimeOut >= 10)
-                {
-                    remove(users[i].Address, users[i].Port, "Timed Out");
-                }
-                else
-                {
-                    try
-                    {
-                        broadcast = users[i].EndPoint;
-                        byte[] msg;
-                        if (sync)
-                        {
-                            msg = PkgMngr.GetBytes("ping|" + users[i].Id);
-                            server.Send(msg, msg.Length, broadcast);
-                            users[i].TimeOut++;
-                        }
-                        if (advert.Length > 0)
-                        {
-                            msg = PkgMngr.GetBytes(advert);
-                            server.Send(msg, msg.Length, broadcast);
-                            Console.WriteLine("Sent: " + advert);
-                        }
-                    }
-                    catch (SocketException e)
-                    {
-                        remove(users[i].Address, users[i].Port, "Problem: "+e);
-                    }
-                }
             }
         }
 
@@ -429,7 +315,7 @@ namespace RadikoNetcode
         /// <param name="ID">ID of the user</param>
         public void sendDirect(byte signal, byte[] message, int ID = -1)
         {
-
+            Console.WriteLine("Testing");
             IPEndPoint EP = ProcurarPorID(ID).EndPoint;
             byte[] msg = PkgMngr.GenerateMessage(signal, message);
             server.Send(msg, msg.Length, EP);

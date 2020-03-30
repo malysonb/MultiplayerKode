@@ -55,6 +55,14 @@ namespace RadikoNetcode
             return Encoding.ASCII.GetBytes(_string);
         }
 
+        public static byte GetBytes(char _char)
+        {
+            string a = "";
+            a += _char;
+            byte result = byte.Parse(a);
+            return result;
+        }
+
         /// <summary>
         /// Translates an array of bytes to an array of strings.
         /// </summary>

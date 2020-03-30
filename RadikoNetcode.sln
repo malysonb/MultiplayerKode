@@ -5,6 +5,8 @@ VisualStudioVersion = 16.0.29613.14
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RadikoNetcode", "MultiplayerKode\RadikoNetcode.csproj", "{12DE83D9-A1EA-4109-8D7C-C20A443CA52A}"
 EndProject
+Project("{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}") = "RelayServer", "RelayServer\RelayServer.njsproj", "{C1FDB965-5F6D-4B1F-A35E-E027928D2B57}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{12DE83D9-A1EA-4109-8D7C-C20A443CA52A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{12DE83D9-A1EA-4109-8D7C-C20A443CA52A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{12DE83D9-A1EA-4109-8D7C-C20A443CA52A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C1FDB965-5F6D-4B1F-A35E-E027928D2B57}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C1FDB965-5F6D-4B1F-A35E-E027928D2B57}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C1FDB965-5F6D-4B1F-A35E-E027928D2B57}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C1FDB965-5F6D-4B1F-A35E-E027928D2B57}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

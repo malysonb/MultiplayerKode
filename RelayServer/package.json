@@ -1,0 +1,12 @@
+{
+  "name": "relay-server",
+  "version": "0.0.1",
+  "description": "RelayServer",
+  "main": "server.js",
+  "author": {
+    "name": "Malyson Breno de Souza"
+  },
+  "dependencies": {
+    "ws": "^7.2.3"
+  }
+}

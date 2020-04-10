@@ -1,17 +1,9 @@
 'use strict';
 const WebSocket = require('ws');
 
-var http = require('http');
-var port = process.env.PORT || 80;
-
 var nofclients = 0;
 
-http.createServer(function (req, res) {
-    res.writeHead(200, { 'Content-Type': 'text/plain' });
-    res.end('Server is online\n there is ' + nofclients + ' players online');
-}).listen(port);
-
-const wss = new WebSocket.Server({ port: 3000 });
+const wss = new WebSocket.Server({ port: 8080 });
 
 wss.on('connection', function connection(ws) {
     console.log("Connected!");
@@ -24,6 +16,4 @@ wss.on('connection', function connection(ws) {
             }
         });
     });
-
-    ws.send('something');
 });

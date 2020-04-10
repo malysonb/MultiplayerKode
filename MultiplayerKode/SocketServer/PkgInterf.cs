@@ -8,20 +8,17 @@ namespace RadikoNetcode
     /// INTERFACE FOR RADIKO MULTIPLAYER NETCODE<br/>
     /// VERSION: 1.1
     /// </summary>
-    interface IPkgInterf
+    static class PkgInterf
     {
-        public interface IHeader
-        {
-            const byte PING = 0;
-            const byte SYNC = 1;
-            const byte CHAT = 2;
-            const byte INPUT = 3;
-            const byte HELLO = 4;
-            const byte GOODBYE = 5;
-            const byte JOIN = 6;
-            const byte HANDSHAKE = 7;
-            const byte ALERT = 8;
-            const byte ERROR = 255;
-        }
+        public const byte PING = 0;
+        public const byte SYNC = 1;
+        public const byte CHAT = 2;
+        public const byte INPUT = 3;
+        public const byte HELLO = 4;
+        public const byte GOODBYE = 5;
+        public const byte JOIN = 6;
+        public const byte HANDSHAKE = 7;
+        public const byte ALERT = 8;
+        public const byte ERROR = 255;
     }
 }

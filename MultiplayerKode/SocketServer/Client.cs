@@ -13,7 +13,7 @@ namespace RadikoNetcode
     public class Client
     {
         private String address;
-        private String nome;
+        private String name;
         private int port;
         private bool online = true;
         private Player player = null;
@@ -21,11 +21,11 @@ namespace RadikoNetcode
         private int id;
         private int timeOut = 0;
 
-        public Client(string Address, int port, string nome, int id = 0)
+        public Client(string Address, int port, string name, int id = 0)
         {
             this.Address = Address;
             this.Port = port;
-            this.Nome = nome;
+            this.Name = name;
             online = true;
             this.Id = id;
             Player = new Player(Id);
@@ -41,7 +41,7 @@ namespace RadikoNetcode
         public int Port { get => port; set => port = value; }
         public bool Online { get => online; set => online = value; }
         public string Address { get => address; set => address = value; }
-        public string Nome { get => nome; set => nome = value; }
+        public string Name { get => name; set => name = value; }
         public int Id { get => id; set => id = value; }
         public int TimeOut { get => timeOut; set => timeOut = value; }
         internal Player Player { get => player; set => player = value; }

@@ -13,6 +13,10 @@ using System.Threading;
 
 namespace RadikoNetcode
 {
+    /// <summary>
+    /// UDP protocol server.<br/>
+    /// VERSION 0.3.0
+    /// </summary>
     class UDPnetKode
     {
         private UdpClient server;
@@ -171,7 +175,7 @@ namespace RadikoNetcode
                     broadcast = users[j].EndPoint;
                     for (int i = 0; i < users.Count; i++)
                     {
-                        if (i != j)
+                        if (i != j && users[i] != null)
                         {
                             byte[] msg = PkgMngr.GenerateMessage(PkgInterf.SYNC, users[i].GetPosition(), users[i].GetID());
                             Console.WriteLine("Sending: " + msg.Length + " Bits.");
@@ -221,7 +225,7 @@ namespace RadikoNetcode
                         if (Custom != null)
                         {
                             server.Send(Custom, Custom.Length, broadcast);
-                            Console.WriteLine("Sent: " + PkgMngr.Translate(Custom));
+                            Console.WriteLine("Sent:" + PkgMngr.Translate(Custom));
                         }
                     }
                     catch (SocketException e)
@@ -284,7 +288,7 @@ namespace RadikoNetcode
         /// </summary>
         /// <param name="Address">Client's IP Address.</param>
         /// <param name="_port">Client's port</param>
-        /// <param name="nome">Client's name</param>
+        /// <param name="name">Client's name</param>
         /// <param name="qt_custom">Extra sync vars</param>
         /// <returns>Client object</returns>
         public Client insert(string Address, int _port, string name)
@@ -292,6 +296,8 @@ namespace RadikoNetcode
             Client obj = new Client(Address, _port, name, IDcont);
             Console.WriteLine("Welcome! " + name + " with the ID: " + IDcont);
             users.Add(obj);
+            byte[] advise = PkgMngr.GenerateMessage(PkgInterf.JOIN, BitConverter.GetBytes(IDcont), PkgMngr.GetBytes(name));
+            Broadcast(advise,false);
             IDcont++;
             return obj;
         }

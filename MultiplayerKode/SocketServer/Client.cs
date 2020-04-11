@@ -144,9 +144,6 @@ namespace RadikoNetcode
                 float X = BitConverter.ToSingle(x);
                 float Y = BitConverter.ToSingle(y);
                 float Z = BitConverter.ToSingle(z);
-                Console.WriteLine("x: " + X);
-                Console.WriteLine("y: " + Y);
-                Console.WriteLine("z: " + Z);
                 SetPosition(X, Y, Z);
             }
         }

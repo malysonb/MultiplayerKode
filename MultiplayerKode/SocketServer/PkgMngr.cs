@@ -5,7 +5,7 @@ namespace RadikoNetcode
 {
     /// <summary>
     /// PACKAGE MANAGER MODULE FOR RADIKO MULTIPLAYER NETCODE SERVER<br/>
-    /// VERSION 3.0
+    /// VERSION 3.1
     /// </summary>
     /// 
     static class PkgMngr
@@ -19,17 +19,19 @@ namespace RadikoNetcode
         public static byte[] GenerateMessage(byte signal, params byte[][] args)
         {
             int length = 0;
-            for(int i = 0; i < args.Length; i++)
+            for (int i = 0; i < args.Length; i++)
             {
                 length += args[i].Length;
             }
-            byte[] Package = new byte[length+1];
+            byte[] Package = new byte[length + 1];
             Package[0] = signal;
+            int index = 1;
             for (int i = 0; i < args.Length; i++)
             {
-                for(int j = 1; j < Package.Length; j++)
+                for (int j = 0; j < args[i].Length; j++)
                 {
-                    Package[j] = args[i][j-1];
+                    Package[index] = args[i][j];
+                    index++;
                 }
             }
             return Package;

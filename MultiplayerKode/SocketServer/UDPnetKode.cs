@@ -87,8 +87,8 @@ namespace RadikoNetcode
                             {
                                 byte[] idtosend = new byte[4];
                                 idtosend = BitConverter.GetBytes(IDcont);
-                                sendDirect(PkgInterf.HANDSHAKE, idtosend, clientes.Address, clientes.Port);
                                 insert(clientes.Address.ToString(), clientes.Port, PkgMngr.Translate(PkgMngr.TrimByteArray(1, Pkg.Length, Pkg)));
+                                sendDirect(PkgInterf.HANDSHAKE, idtosend, clientes.Address, clientes.Port);
                             }
                             break;
                         case PkgInterf.GOODBYE:
@@ -295,9 +295,9 @@ namespace RadikoNetcode
         {
             Client obj = new Client(Address, _port, name, IDcont);
             Console.WriteLine("Welcome! " + name + " with the ID: " + IDcont);
-            users.Add(obj);
             byte[] advise = PkgMngr.GenerateMessage(PkgInterf.JOIN, BitConverter.GetBytes(IDcont), PkgMngr.GetBytes(name));
             Broadcast(advise,false);
+            users.Add(obj);
             IDcont++;
             return obj;
         }

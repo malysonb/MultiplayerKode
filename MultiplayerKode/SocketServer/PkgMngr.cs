@@ -5,7 +5,7 @@ namespace RadikoNetcode
 {
     /// <summary>
     /// PACKAGE MANAGER MODULE FOR RADIKO MULTIPLAYER NETCODE SERVER<br/>
-    /// VERSION 3.1
+    /// VERSION 3.2
     /// </summary>
     /// 
     static class PkgMngr
@@ -86,9 +86,11 @@ namespace RadikoNetcode
         public static byte[] TrimByteArray(int start, int end, byte[] byteArray)
         {
             byte[] result = new byte[end - start];
+            int index = 0;
             for(int i = start; i < end; i++)
             {
-                result[i-1] = byteArray[i];
+                result[index] = byteArray[i];
+                index++;
             }
             return result;
         }

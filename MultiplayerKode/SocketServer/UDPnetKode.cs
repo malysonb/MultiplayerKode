@@ -45,7 +45,7 @@ namespace RadikoNetcode
             clock.Elapsed += Clock_Elapsed;
             clock.Enabled = true;
             clock.AutoReset = true;
-            sync_time = new System.Timers.Timer(200);
+            sync_time = new System.Timers.Timer(2000);
             sync_time.Elapsed += Sync_time_Elapsed;
             sync_time.Enabled = true;
             sync_time.AutoReset = true;
@@ -88,6 +88,7 @@ namespace RadikoNetcode
                                 byte[] idtosend = new byte[4];
                                 idtosend = BitConverter.GetBytes(IDcont);
                                 insert(clientes.Address.ToString(), clientes.Port, PkgMngr.Translate(PkgMngr.TrimByteArray(1, Pkg.Length, Pkg)));
+                                Console.WriteLine("Connection incoming [{0}:{1}]", clientes.Address.ToString(), clientes.Port);
                                 sendDirect(PkgInterf.HANDSHAKE, idtosend, clientes.Address, clientes.Port);
                                 //SendEverybodyID(clientes.Address, clientes.Port);
                             }
@@ -115,7 +116,6 @@ namespace RadikoNetcode
                                 /*1-XXXX-YYYY-ZZZZ*/
                                 Client temp = SearchByAddres(clientes.Address.ToString(), clientes.Port);
                                 temp.SetPositionByByteArray(PkgMngr.TrimByteArray(1,13,Pkg));
-
                             }
                             else
                                 sendDirect(PkgInterf.ERROR, clientes.Address, clientes.Port);
@@ -125,10 +125,20 @@ namespace RadikoNetcode
                              * but syncing his position and rotation before all thing*/
                             if (SearchByAddres(clientes.Address.ToString(), clientes.Port) != null)
                             {
-                                /*3-XXXX-YYYY-ZZZZ-xxxx-yyyy-zzzz-I-A-IDID*/
+                                /*H O I IDID XXXX YYYY ZZZZ RXRX RYRY RZRZ
+                                HEADER : 	3		UNSIGNED CHAR/BYTE	
+                                IO : 		0-1		BOOL/BYTE		BUTTON ON-OFF
+                                INPUTKEY : 	0-255 		UNSIGNED CHAR/BYTE	BUTTON PRESSED
+                                IDID :		2^32		INT32			PLAYER ID
+                                XXXX :		0.0000		FLOAT			X Position.
+                                YYYY :		0.0000		FLOAT			Y Position.
+                                ZZZZ :		0.0000		FLOAT			Z Position.
+                                RXRX :		0.0000		FLOAT			X Rotation.
+                                RYRY :		0.0000		FLOAT			Y Rotation.
+                                RZRZ :		0.0000		FLOAT			Z Rotation.*/
                                 Client temp = SearchByAddres(clientes.Address.ToString(), clientes.Port);
-                                temp.SetPositionByByteArray(PkgMngr.TrimByteArray(1, 13, Pkg));
-                                temp.SetRotationByByteArray(PkgMngr.TrimByteArray(13, 25, Pkg));
+                                temp.SetPositionByByteArray(PkgMngr.TrimByteArray(7, 19, Pkg));
+                                temp.SetRotationByByteArray(PkgMngr.TrimByteArray(19, 31, Pkg));
                                 Broadcast(Pkg,false);
                             }
                             else

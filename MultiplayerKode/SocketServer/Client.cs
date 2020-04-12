@@ -100,6 +100,10 @@ namespace RadikoNetcode
             temp.X = X;
             temp.Y = Y;
             temp.Z = Z;
+            /*Console.WriteLine("DEBUG: \n" +
+                "X="+X+"\n" +
+                "Y="+Y+"\n" +
+                "Z="+Z);*/
             Player.Position = temp;
         }
 

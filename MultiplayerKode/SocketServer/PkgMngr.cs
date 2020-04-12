@@ -37,6 +37,26 @@ namespace RadikoNetcode
             return Package;
         }
 
+        public static byte[] Union(params byte[][] args)
+        {
+            int length = 0;
+            for (int i = 0; i < args.Length; i++)
+            {
+                length += args[i].Length;
+            }
+            byte[] Package = new byte[length];
+            int index = 0;
+            for (int i = 0; i < args.Length; i++)
+            {
+                for (int j = 0; j < args[i].Length; j++)
+                {
+                    Package[index] = args[i][j];
+                    index++;
+                }
+            }
+            return Package;
+        }
+
         /// <summary>
         /// Translates a byte array to an ASCII string.
         /// </summary>
@@ -94,6 +114,5 @@ namespace RadikoNetcode
             }
             return result;
         }
-
     }
 }

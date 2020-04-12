@@ -19,6 +19,8 @@ namespace RadikoNetcode
         public const byte JOIN = 6;
         public const byte HANDSHAKE = 7;
         public const byte ALERT = 8;
+        public const byte UPDATE = 9;
+        public const byte INFO = 10;
         public const byte ERROR = 255;
     }
 }

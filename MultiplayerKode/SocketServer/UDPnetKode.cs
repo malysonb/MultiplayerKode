@@ -89,6 +89,7 @@ namespace RadikoNetcode
                                 idtosend = BitConverter.GetBytes(IDcont);
                                 insert(clientes.Address.ToString(), clientes.Port, PkgMngr.Translate(PkgMngr.TrimByteArray(1, Pkg.Length, Pkg)));
                                 sendDirect(PkgInterf.HANDSHAKE, idtosend, clientes.Address, clientes.Port);
+                                //SendEverybodyID(clientes.Address, clientes.Port);
                             }
                             break;
                         case PkgInterf.GOODBYE:
@@ -114,6 +115,7 @@ namespace RadikoNetcode
                                 /*1-XXXX-YYYY-ZZZZ*/
                                 Client temp = SearchByAddres(clientes.Address.ToString(), clientes.Port);
                                 temp.SetPositionByByteArray(PkgMngr.TrimByteArray(1,13,Pkg));
+
                             }
                             else
                                 sendDirect(PkgInterf.ERROR, clientes.Address, clientes.Port);
@@ -140,6 +142,9 @@ namespace RadikoNetcode
                             }
                             else
                                 sendDirect(PkgInterf.ERROR, clientes.Address, clientes.Port);
+                            break;
+                        case PkgInterf.INFO:
+                            Broadcast(Pkg, false);
                             break;
                         default:
                             if (SearchByAddres(clientes.Address.ToString(), clientes.Port) != null)
@@ -178,7 +183,7 @@ namespace RadikoNetcode
                         if (i != j && users[i] != null)
                         {
                             byte[] msg = PkgMngr.GenerateMessage(PkgInterf.SYNC, users[i].GetPosition(), users[i].GetID());
-                            Console.WriteLine("Sending: " + msg.Length + " Bits.");
+                            //Console.WriteLine("DEBUG — Sending: " + msg.Length + " Bits.");
                             server.Send(msg, msg.Length, broadcast);
                         }
                     }
@@ -225,7 +230,7 @@ namespace RadikoNetcode
                         if (Custom != null)
                         {
                             server.Send(Custom, Custom.Length, broadcast);
-                            Console.WriteLine("Sent:" + PkgMngr.Translate(Custom));
+                            //Console.WriteLine("Sent:" + PkgMngr.Translate(Custom));
                         }
                     }
                     catch (SocketException e)
@@ -397,8 +402,25 @@ namespace RadikoNetcode
                 if (users[i].Id == _ID)
                 {
                     users.RemoveAt(i);
+                    Broadcast(PkgMngr.GenerateMessage(PkgInterf.GOODBYE, BitConverter.GetBytes(_ID)), false);
                 }
             }
+        }
+
+        public void SendEverybodyID(IPAddress IP, int Port)
+        {
+            byte[] pkg = new byte[4 * users.Count];
+            int index = 0;
+            for(int i = 0; i < users.Count; i++)
+            {
+                byte[] _id = users[i].GetID();
+                for(int j = 0; j < 4; j++)
+                {
+                    pkg[index] = _id[j];
+                }
+            }
+            byte[] final_pkg = PkgMngr.Union(BitConverter.GetBytes(users.Count), pkg);
+            sendDirect(PkgInterf.UPDATE, final_pkg, IP, Port);
         }
 
     }

@@ -8,4 +8,4 @@ Learn about it reading our [Wiki!](https://github.com/malysonb/RadikoMultiplayer
 
 Dedicated Server & Client for Unity (Soon..).
 
-***In progress...***
+***NOT WORKING YET! STILL IN PROGRESS...***

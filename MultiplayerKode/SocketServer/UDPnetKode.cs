@@ -125,10 +125,10 @@ namespace RadikoNetcode
                              * but syncing his position and rotation before all thing*/
                             if (Search(clientes.Address.ToString(), clientes.Port) != null)
                             {
-                                /*H I O IDID XXXX YYYY ZZZZ X Y Z
-                                HEADER : 	3		UNSIGNED CHAR/BYTE	
+                                /*H-I-P-IDID-XXXX-YYYY-ZZZZ-X-Y-Z
+                                HEADER : 	3		    UNSIGNED CHAR/BYTE	
                                 INPUTKEY : 	0-255 		UNSIGNED CHAR/BYTE	BUTTON PRESSED
-                                IO : 		0-255		BOOL/BYTE		    PWM BUTTON ON-OFF
+                                PWM : 		0-255		BOOL/BYTE		    PWM BUTTON ON-OFF
                                 IDID :		2^32		INT32			    PLAYER ID
                                 XXXX :		0.0000		FLOAT			    X Position.
                                 YYYY :		0.0000		FLOAT			    Y Position.
@@ -204,7 +204,6 @@ namespace RadikoNetcode
                             server.Send(msg, msg.Length, broadcast);
                         }
                     }
-                    Thread.Sleep(100);
                 }
                 catch (Exception e)
                 {

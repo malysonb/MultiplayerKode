@@ -20,6 +20,7 @@ namespace RadikoNetcode
         private IPEndPoint endPoint;
         private int id;
         private int timeOut = 0;
+        private byte[] lastInput = new byte[2] { 0, 0 };
 
         public Client(string Address, int port, string name, int id = 0)
         {
@@ -46,6 +47,7 @@ namespace RadikoNetcode
         public int TimeOut { get => timeOut; set => timeOut = value; }
         internal Player Player { get => player; set => player = value; }
         public IPEndPoint EndPoint { get => endPoint;}
+        public byte[] LastInput { get => lastInput; set => lastInput = value; }
 
         /// <summary>
         /// Gets the 3D position of a player.
@@ -56,6 +58,15 @@ namespace RadikoNetcode
         public string GetPositionString()
         {
             return player.Position.X + ";" + player.Position.Y + ";" + player.Position.Z;
+        }
+
+        public void NewInput(byte[] _pkg)
+        {
+            SetPositionByByteArray(PkgMngr.TrimByteArray(7, 19, _pkg));
+            SetRotationByByteArray(PkgMngr.TrimByteArray(19, 22, _pkg));
+            LastInput[0] = _pkg[1];
+            LastInput[1] = _pkg[2];
+
         }
 
         public byte[] GetID()
@@ -154,7 +165,7 @@ namespace RadikoNetcode
 
         public void SetRotationByByteArray(byte[] Bytes)
         {
-            if (Bytes.Length > 12)
+            /*if (Bytes.Length > 12)
             {
                 throw new ArgumentOutOfRangeException("The Byte array is too big, it should be only 12 bytes.");
             }
@@ -174,6 +185,17 @@ namespace RadikoNetcode
                 Console.WriteLine("y: " + Y);
                 Console.WriteLine("z: " + Z);
                 SetRotation(X, Y, Z);
+            }*/
+            if(Bytes.Length > 3 || Bytes.Length < 3)
+            {
+                throw new ArgumentOutOfRangeException("You need 3 bytes to set a rotation");
+            }
+            else
+            {
+                float x = (Bytes[0] * 360) / 256;
+                float y = (Bytes[1] * 360) / 256;
+                float z = (Bytes[2] * 360) / 256;
+                SetRotation(x, y, z);
             }
         }
 

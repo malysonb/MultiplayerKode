@@ -21,6 +21,7 @@ namespace RadikoNetcode
         public const byte ALERT = 8;
         public const byte UPDATE = 9;
         public const byte INFO = 10;
+        public const byte REQUEST = 11;
         public const byte ERROR = 255;
     }
 }

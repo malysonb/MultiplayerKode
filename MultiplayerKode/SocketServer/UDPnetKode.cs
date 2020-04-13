@@ -83,7 +83,7 @@ namespace RadikoNetcode
                     switch (Pkg[0])
                     {
                         case PkgInterf.HELLO:
-                            if (SearchByAddres(clientes.Address.ToString(), clientes.Port) == null)
+                            if (Search(clientes.Address.ToString(), clientes.Port) == null)
                             {
                                 byte[] idtosend = new byte[4];
                                 idtosend = BitConverter.GetBytes(IDcont);
@@ -94,27 +94,27 @@ namespace RadikoNetcode
                             }
                             break;
                         case PkgInterf.GOODBYE:
-                            if (SearchByAddres(clientes.Address.ToString(), clientes.Port) != null)
+                            if (Search(clientes.Address.ToString(), clientes.Port) != null)
                             {
-                                Client temp = SearchByAddres(clientes.Address.ToString(), clientes.Port);
+                                Client temp = Search(clientes.Address.ToString(), clientes.Port);
                                 remove(temp.Id, "Disconnected Safely");
                             }
                             else
                                 sendDirect(PkgInterf.ERROR,clientes.Address,clientes.Port);
                             break;
                         case PkgInterf.PING:
-                            if(SearchByAddres(clientes.Address.ToString(), clientes.Port) != null)
+                            if(Search(clientes.Address.ToString(), clientes.Port) != null)
                             {
-                                SearchByAddres(clientes.Address.ToString(), clientes.Port).TimeOut = 0;
+                                Search(clientes.Address.ToString(), clientes.Port).TimeOut = 0;
                             }
                             else
                                 sendDirect(PkgInterf.ERROR, clientes.Address, clientes.Port);
                             break;
                         case PkgInterf.SYNC:
-                            if(SearchByAddres(clientes.Address.ToString(),clientes.Port) != null)
+                            if(Search(clientes.Address.ToString(),clientes.Port) != null)
                             {
                                 /*1-XXXX-YYYY-ZZZZ*/
-                                Client temp = SearchByAddres(clientes.Address.ToString(), clientes.Port);
+                                Client temp = Search(clientes.Address.ToString(), clientes.Port);
                                 temp.SetPositionByByteArray(PkgMngr.TrimByteArray(1,13,Pkg));
                             }
                             else
@@ -123,31 +123,29 @@ namespace RadikoNetcode
                         case PkgInterf.INPUT:
                             /*It will send to all players the input to of an player
                              * but syncing his position and rotation before all thing*/
-                            if (SearchByAddres(clientes.Address.ToString(), clientes.Port) != null)
+                            if (Search(clientes.Address.ToString(), clientes.Port) != null)
                             {
-                                /*H O I IDID XXXX YYYY ZZZZ RXRX RYRY RZRZ
+                                /*H I O IDID XXXX YYYY ZZZZ X Y Z
                                 HEADER : 	3		UNSIGNED CHAR/BYTE	
-                                IO : 		0-1		BOOL/BYTE		BUTTON ON-OFF
                                 INPUTKEY : 	0-255 		UNSIGNED CHAR/BYTE	BUTTON PRESSED
-                                IDID :		2^32		INT32			PLAYER ID
-                                XXXX :		0.0000		FLOAT			X Position.
-                                YYYY :		0.0000		FLOAT			Y Position.
-                                ZZZZ :		0.0000		FLOAT			Z Position.
-                                RXRX :		0.0000		FLOAT			X Rotation.
-                                RYRY :		0.0000		FLOAT			Y Rotation.
-                                RZRZ :		0.0000		FLOAT			Z Rotation.*/
-                                Client temp = SearchByAddres(clientes.Address.ToString(), clientes.Port);
-                                temp.SetPositionByByteArray(PkgMngr.TrimByteArray(7, 19, Pkg));
-                                temp.SetRotationByByteArray(PkgMngr.TrimByteArray(19, 31, Pkg));
-                                Broadcast(Pkg,false);
+                                IO : 		0-255		BOOL/BYTE		    PWM BUTTON ON-OFF
+                                IDID :		2^32		INT32			    PLAYER ID
+                                XXXX :		0.0000		FLOAT			    X Position.
+                                YYYY :		0.0000		FLOAT			    Y Position.
+                                ZZZZ :		0.0000		FLOAT			    Z Position.
+                                X :		    0-255		BYTE			    X Rotation.
+                                Y :		    0-255		BYTE			    Y Rotation.
+                                Z :		    0-255		BYTE			    Z Rotation.*/
+                                Client temp = Search(clientes.Address.ToString(), clientes.Port);
+                                temp.NewInput(Pkg);
                             }
                             else
                                 sendDirect(PkgInterf.ERROR, clientes.Address, clientes.Port);
                             break;
                         case PkgInterf.CHAT:
-                            if (SearchByAddres(clientes.Address.ToString(), clientes.Port) != null)
+                            if (Search(clientes.Address.ToString(), clientes.Port) != null)
                             {
-                                Client clien = SearchByAddres(clientes.Address.ToString(), clientes.Port);
+                                Client clien = Search(clientes.Address.ToString(), clientes.Port);
                                 Console.WriteLine(clien.Name + ": " + PkgMngr.Translate(Pkg));
                             }
                             else
@@ -156,10 +154,19 @@ namespace RadikoNetcode
                         case PkgInterf.INFO:
                             Broadcast(Pkg, false);
                             break;
-                        default:
-                            if (SearchByAddres(clientes.Address.ToString(), clientes.Port) != null)
+                        case PkgInterf.REQUEST:
+                            Client temp_client = Search(clientes.Address.ToString(), clientes.Port);
+                            if(temp_client != null)
                             {
-                                Client clien = SearchByAddres(clientes.Address.ToString(), clientes.Port);
+                                byte[] idtosend = new byte[4];
+                                idtosend = temp_client.GetID();
+                                sendDirect(PkgInterf.HANDSHAKE, idtosend, clientes.Address, clientes.Port);
+                            }
+                            break;
+                        default:
+                            if (Search(clientes.Address.ToString(), clientes.Port) != null)
+                            {
+                                Client clien = Search(clientes.Address.ToString(), clientes.Port);
                                 Console.WriteLine(clien.Name + ": " + PkgMngr.Translate(Pkg) + " (Using an unkown header)");
                             }
                             else
@@ -257,7 +264,7 @@ namespace RadikoNetcode
         /// <param name="Address"></param>
         /// <param name="port"></param>
         /// <returns>Client object</returns>
-        public Client SearchByAddres(string Address, int port)
+        public Client Search(string Address, int port)
         {
             for (int i = 0; i < users.Count; i++)
             {
@@ -274,7 +281,7 @@ namespace RadikoNetcode
         /// </summary>
         /// <param name="_id"></param>
         /// <returns>Client object</returns>
-        public Client SearchByID(int _id)
+        public Client Search(int _id)
         {
             for(int i = 0; i < users.Count; i++)
             {
@@ -286,6 +293,11 @@ namespace RadikoNetcode
             return null;
         }
 
+        /// <summary>
+        /// Search your client by the name!
+        /// </summary>
+        /// <param name="UserName">Client Name</param>
+        /// <returns>Client Object</returns>
         public Client Search(string UserName)
         {
             for(int i = 0; i < users.Count; i++)
@@ -356,7 +368,7 @@ namespace RadikoNetcode
         public void sendDirect(byte signal, byte[] message, int ID = -1)
         {
             Console.WriteLine("Testing");
-            IPEndPoint EP = SearchByID(ID).EndPoint;
+            IPEndPoint EP = Search(ID).EndPoint;
             byte[] msg = PkgMngr.GenerateMessage(signal, message);
             server.Send(msg, msg.Length, EP);
         }

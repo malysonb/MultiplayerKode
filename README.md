@@ -6,6 +6,8 @@ Feel free to suggest new stuff.
 
 Learn about it reading our [Wiki!](https://github.com/malysonb/RadikoMultiplayer/wiki)
 
-Dedicated Server & Client for Unity (Soon..).
+**Dedicated Server & Client for Unity (Soon..).**
 
-***NOT WORKING YET! STILL IN PROGRESS...***
+***For while you need to make your own client***
+
+***STILL IN PROGRESS...***
